@@ -91,8 +91,8 @@ function TopMenu({
       className={`no-user-select ${styles['wrapper']}`}
       style={{
         background: controlsBackground,
-        borderBottom: '1px solid var(--gray-4)',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.15)',
+        borderBottom: '1px solid var(--llc-border-subtle)',
+        boxShadow: 'var(--llc-shadow-xs)',
         transition: darkModeTransition,
         display: 'flex',
         alignItems: 'center',

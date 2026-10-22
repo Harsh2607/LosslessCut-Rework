@@ -236,11 +236,11 @@ const Segment = memo(({
       position: 'relative',
       transform: CSS.Transform.toString(sortable.transform),
       transition: transitions.length > 0 ? transitions.join(', ') : undefined,
-      background: isActive ? 'var(--gray-3)' : 'var(--gray-2)',
-      border: `1px solid ${isActive ? 'var(--gray-8)' : 'var(--gray-4)'}`,
-      borderLeft: segColorStr ? `4px solid ${segColorStr}` : `1px solid ${isActive ? 'var(--gray-8)' : 'var(--gray-4)'}`,
-      borderRadius: 6,
-      boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.3)' : '0 1px 2px rgba(0,0,0,0.1)',
+      background: isActive ? 'var(--llc-bg-surface-elevated)' : 'var(--llc-bg-card)',
+      border: `1px solid ${isActive ? 'var(--llc-border-strong)' : 'var(--llc-border-subtle)'}`,
+      borderLeft: segColorStr ? `4px solid ${segColorStr}` : `1px solid ${isActive ? 'var(--llc-border-strong)' : 'var(--llc-border-subtle)'}`,
+      borderRadius: 'var(--llc-radius-md)',
+      boxShadow: isActive ? 'var(--llc-shadow-md)' : 'var(--llc-shadow-xs)',
       opacity: !selected && !invertCutSegments ? 0.5 : undefined,
     };
   }, [getSegColor, invertCutSegments, isActive, seg, selected, sortable.isDragging, sortable.transform, sortable.transition]);
@@ -503,8 +503,8 @@ function SegmentList({
           )}
         </div>
 
-        <div style={{ padding: '8px 12px', boxSizing: 'border-box', borderBottom: '1px solid var(--gray-6)', borderTop: '1px solid var(--gray-6)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '.85em', background: 'var(--gray-2)' }}>
-          <div style={{ fontWeight: 500, color: 'var(--gray-11)' }}>{t('Segments total:')}</div>
+        <div style={{ padding: '8px 12px', boxSizing: 'border-box', borderBottom: '1px solid var(--llc-border-subtle)', borderTop: '1px solid var(--llc-border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '.85em', background: 'var(--llc-bg-surface-elevated)' }}>
+          <div style={{ fontWeight: 500, color: 'var(--llc-text-secondary)' }}>{t('Segments total:')}</div>
           <div className="timecode-badge" style={{ padding: '2px 8px', fontSize: '0.88em' }}>{formatTimecode({ seconds: segmentsTotal })}</div>
         </div>
       </>

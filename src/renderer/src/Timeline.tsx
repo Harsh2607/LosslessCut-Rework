@@ -72,12 +72,12 @@ const Waveforms = memo(({ calculateTimelinePercent, fileDurationNonZero, wavefor
 
 // eslint-disable-next-line react/display-name
 const CommandedTime = memo(({ commandedTimePercent }: { commandedTimePercent: string }) => {
-  const color = 'var(--cyan-9)';
+  const color = 'var(--llc-playhead-needle, #00f3ff)';
   const commonStyle: CSSProperties = { left: commandedTimePercent, position: 'absolute', pointerEvents: 'none', zIndex: 10 };
   return (
     <>
       <FaCaretDown style={{ ...commonStyle, top: 0, color, fontSize: 15, marginLeft: -7.5, marginTop: -6, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }} />
-      <div style={{ ...commonStyle, bottom: 0, top: 0, backgroundColor: color, width: currentTimeWidth + 1, boxShadow: '0 0 6px var(--cyan-8), 0 0 0 1px rgba(0,0,0,0.4)' }} />
+      <div style={{ ...commonStyle, bottom: 0, top: 0, backgroundColor: color, width: currentTimeWidth + 1, boxShadow: 'var(--llc-glow-cyan, 0 0 10px rgba(0, 243, 255, 0.7)), 0 0 0 1px rgba(0,0,0,0.4)' }} />
       <FaCaretUp style={{ ...commonStyle, bottom: 0, color, fontSize: 15, marginLeft: -7.5, marginBottom: -5, filter: 'drop-shadow(0 -2px 4px rgba(0,0,0,0.5))' }} />
     </>
   );
@@ -458,9 +458,9 @@ function Timeline({
                 position: 'absolute',
                 bottom: 0,
                 top: 0,
-                backgroundColor: '#38bdf8',
+                backgroundColor: 'var(--llc-playhead-needle, #38bdf8)',
                 width: 2,
-                boxShadow: '0 0 8px rgba(56, 189, 248, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.4)',
+                boxShadow: 'var(--llc-glow-cyan, 0 0 8px rgba(56, 189, 248, 0.6)), 0 0 0 1px rgba(0, 0, 0, 0.4)',
                 pointerEvents: 'none',
                 zIndex: 9,
               }}

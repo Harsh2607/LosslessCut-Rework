@@ -1,0 +1,287 @@
+/**
+ * LosslessCut Component Style Definitions
+ * Reusable, token-driven component classes across all surfaces.
+ */
+
+/* ==========================================================================
+   1. BUTTONS & CONTROLS
+   ========================================================================== */
+.llc-btn {
+  appearance: none;
+  font-family: var(--llc-font-sans);
+  font-size: var(--llc-text-sm);
+  font-weight: var(--llc-weight-medium);
+  line-height: var(--llc-leading-tight);
+  color: var(--llc-text-primary);
+  background-color: var(--llc-bg-surface-elevated);
+  border: 1px solid var(--llc-border-default);
+  border-radius: var(--llc-radius-md);
+  padding: 4px 10px;
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--llc-space-xs);
+  box-sizing: border-box;
+  box-shadow: var(--llc-shadow-xs);
+  transition: var(--llc-transition-base);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.llc-btn:hover:not(:disabled) {
+  background-color: var(--llc-bg-surface-hover);
+  border-color: var(--llc-border-strong);
+  box-shadow: var(--llc-shadow-sm);
+  transform: translateY(-0.5px);
+}
+
+.llc-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--llc-shadow-xs);
+}
+
+.llc-btn:focus-visible {
+  outline: 2px solid var(--llc-accent);
+  outline-offset: 1px;
+}
+
+.llc-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Primary CTA Button */
+.llc-btn-primary {
+  background: var(--llc-accent-gradient);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--llc-shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-weight: var(--llc-weight-semibold);
+}
+
+.llc-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.12);
+  box-shadow: var(--llc-shadow-md), 0 0 16px var(--llc-accent-glow);
+  transform: translateY(-1px);
+}
+
+.llc-btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--llc-shadow-xs);
+}
+
+/* Danger Button */
+.llc-btn-danger {
+  background-color: var(--llc-status-danger-bg);
+  color: var(--llc-status-danger);
+  border-color: var(--llc-status-danger-border);
+}
+
+.llc-btn-danger:hover:not(:disabled) {
+  background-color: var(--llc-status-danger);
+  color: #ffffff;
+  border-color: var(--llc-status-danger);
+}
+
+/* ==========================================================================
+   2. CARDS & GLASS PANELS
+   ========================================================================== */
+.llc-card {
+  background: var(--llc-bg-card);
+  border: 1px solid var(--llc-border-subtle);
+  border-radius: var(--llc-radius-lg);
+  box-shadow: var(--llc-shadow-card);
+  transition: var(--llc-transition-base);
+}
+
+.llc-card-interactive {
+  cursor: pointer;
+}
+
+.llc-card-interactive:hover {
+  background: var(--llc-bg-card-hover);
+  border-color: var(--llc-border-default);
+  box-shadow: var(--llc-shadow-card-hover);
+  transform: translateY(-1px);
+}
+
+.llc-glass-panel {
+  background: var(--llc-bg-glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--llc-border-subtle);
+  border-radius: var(--llc-radius-xl);
+  box-shadow: var(--llc-shadow-lg);
+}
+
+/* ==========================================================================
+   3. TIMECODE & MONOSPACE READOUTS
+   ========================================================================== */
+.llc-timecode {
+  font-family: var(--llc-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--llc-tracking-tight);
+}
+
+.llc-timecode-badge {
+  font-family: var(--llc-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--llc-tracking-tight);
+  font-size: var(--llc-text-sm);
+  color: var(--llc-text-primary);
+  background: var(--llc-bg-surface);
+  border: 1px solid var(--llc-border-default);
+  border-radius: var(--llc-radius-md);
+  padding: 3px 8px;
+  box-shadow: var(--llc-shadow-xs);
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ==========================================================================
+   4. BADGES & FORMAT PILLS
+   ========================================================================== */
+.llc-badge {
+  font-family: var(--llc-font-sans);
+  font-size: var(--llc-text-xs);
+  font-weight: var(--llc-weight-semibold);
+  letter-spacing: var(--llc-tracking-wide);
+  padding: 2px 7px;
+  border-radius: var(--llc-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--llc-space-2xs);
+  line-height: var(--llc-leading-none);
+}
+
+.llc-badge-success {
+  background-color: var(--llc-status-success-bg);
+  color: var(--llc-status-success);
+  border: 1px solid var(--llc-status-success-border);
+}
+
+.llc-badge-warning {
+  background-color: var(--llc-status-warning-bg);
+  color: var(--llc-status-warning);
+  border: 1px solid var(--llc-status-warning-border);
+}
+
+.llc-badge-danger {
+  background-color: var(--llc-status-danger-bg);
+  color: var(--llc-status-danger);
+  border: 1px solid var(--llc-status-danger-border);
+}
+
+.llc-badge-info {
+  background-color: var(--llc-status-info-bg);
+  color: var(--llc-status-info);
+  border: 1px solid var(--llc-status-info-border);
+}
+
+.llc-format-pill {
+  font-family: var(--llc-font-sans);
+  font-size: var(--llc-text-xs);
+  font-weight: var(--llc-weight-semibold);
+  letter-spacing: var(--llc-tracking-wider);
+  color: var(--llc-text-secondary);
+  background: var(--llc-bg-surface-elevated);
+  border: 1px solid var(--llc-border-subtle);
+  border-radius: var(--llc-radius-sm);
+  padding: 2px 8px;
+  text-transform: uppercase;
+  transition: var(--llc-transition-base);
+}
+
+.llc-format-pill:hover {
+  color: var(--llc-text-primary);
+  border-color: var(--llc-border-strong);
+  background: var(--llc-bg-surface-hover);
+}
+
+/* ==========================================================================
+   5. FLOATING DOCK & CONTROLS
+   ========================================================================== */
+.llc-dock {
+  display: inline-flex;
+  align-items: center;
+  background: var(--llc-bg-dock);
+  border: 1px solid var(--llc-border-default);
+  border-radius: var(--llc-radius-full);
+  padding: 3px 6px;
+  gap: 2px;
+  backdrop-filter: blur(14px);
+  box-shadow: var(--llc-shadow-md);
+  z-index: var(--llc-z-dock);
+}
+
+.llc-dock-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--llc-radius-full);
+  color: var(--llc-text-secondary);
+  cursor: pointer;
+  transition: var(--llc-transition-base);
+  user-select: none;
+}
+
+.llc-dock-btn:hover {
+  background: var(--llc-bg-surface-hover);
+  color: var(--llc-text-primary);
+  transform: scale(1.08);
+}
+
+.llc-dock-btn:active {
+  transform: scale(0.92);
+}
+
+/* ==========================================================================
+   6. KEYBOARD BADGE (KBD)
+   ========================================================================== */
+.llc-kbd {
+  font-family: var(--llc-font-mono);
+  font-size: var(--llc-text-2xs);
+  font-weight: var(--llc-weight-medium);
+  line-height: var(--llc-leading-none);
+  color: var(--llc-text-secondary);
+  background-color: var(--llc-bg-surface-elevated);
+  border: 1px solid var(--llc-border-default);
+  border-bottom-width: 2px;
+  border-radius: var(--llc-radius-xs);
+  padding: 2px 5px;
+  box-shadow: inset 0 -1px 0 var(--llc-border-subtle);
+  display: inline-block;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ==========================================================================
+   7. INPUTS & SELECTS
+   ========================================================================== */
+.llc-input {
+  font-family: var(--llc-font-sans);
+  font-size: var(--llc-text-sm);
+  color: var(--llc-text-primary);
+  background-color: var(--llc-bg-surface);
+  border: 1px solid var(--llc-border-default);
+  border-radius: var(--llc-radius-md);
+  padding: 4px 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: var(--llc-transition-base);
+}
+
+.llc-input:focus {
+  border-color: var(--llc-border-active);
+  box-shadow: 0 0 0 2px var(--llc-accent-subtle);
+}
+
+.llc-input-mono {
+  font-family: var(--llc-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--llc-tracking-tight);
+}

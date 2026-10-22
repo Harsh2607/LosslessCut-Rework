@@ -18,9 +18,12 @@ https://www.radix-ui.com/docs/colors/palette-composition/understanding-the-scale
 @import '@radix-ui/colors/black-alpha.css';
 @import '@radix-ui/colors/white-alpha.css';
 
+@import './styles/tokens.css';
+@import './styles/components.css';
+
 
 html {
-  font-family: 'Open Sans', 'Noto Sans SemiCondensed', 'Noto Sans', sans-serif;
+  font-family: var(--llc-font-sans);
   font-size: 16px;
   overflow: hidden;
 }
@@ -28,8 +31,8 @@ html {
 body {
   margin: 0;
   overflow: hidden;
-  color: white;
-  background: black;
+  color: var(--llc-text-primary);
+  background: var(--llc-bg-canvas);
 }
 
 /* https://github.com/electron/electron/issues/2538 */
@@ -46,7 +49,8 @@ kbd {
   padding: 3px 5px;
   font-size: 11px;
   line-height: 10px;
-  color: var(--gray-11);
+  font-family: var(--llc-font-mono);
+  color: var(--llc-text-secondary);
   vertical-align: middle;
   background-color: var(--gray-4);
   border: solid 1px var(--gray-8);
@@ -263,7 +267,8 @@ input:focus-visible, select:focus-visible {
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: var(--gray-11);
+  font-family: var(--llc-font-mono);
+  color: var(--llc-text-secondary);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 5px;
@@ -273,7 +278,7 @@ input:focus-visible, select:focus-visible {
 }
 
 .format-pill:hover {
-  color: white;
+  color: var(--llc-text-primary);
   border-color: rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.12);
 }
@@ -298,7 +303,8 @@ input:focus-visible, select:focus-visible {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  color: var(--gray-11);
+  font-family: var(--llc-font-mono);
+  color: var(--llc-text-secondary);
   cursor: pointer;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
@@ -306,7 +312,7 @@ input:focus-visible, select:focus-visible {
 
 .transport-dock-btn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: var(--llc-text-primary);
   transform: scale(1.08);
 }
 

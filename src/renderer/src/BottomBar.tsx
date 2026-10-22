@@ -237,8 +237,8 @@ const CutTimeInput = memo(({ disabled, darkMode, cutTime, setCutTime, startTimeO
 
   const style = useMemo<CSSProperties>(() => ({
     border,
-    borderRadius: 6,
-    backgroundColor: 'var(--gray-4)',
+    borderRadius: 'var(--llc-radius-md)',
+    backgroundColor: 'var(--llc-bg-surface-elevated)',
     transition: darkModeTransition,
     fontSize: 12,
     fontWeight: 500,
@@ -249,12 +249,12 @@ const CutTimeInput = memo(({ disabled, darkMode, cutTime, setCutTime, startTimeO
     marginLeft: isStart ? 0 : 5,
     marginRight: isStart ? 5 : 0,
     boxSizing: 'border-box',
-    fontFamily: "'SF Mono', 'Fira Code', 'Roboto Mono', Menlo, monospace",
-    letterSpacing: '-.02em',
+    fontFamily: 'var(--llc-font-mono)',
+    letterSpacing: 'var(--llc-tracking-tight)',
     width: 96,
     outline: 'none',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
-    color: error ? dangerColor : (isCutTimeManualSet ? 'var(--gray-12)' : 'var(--gray-11)'),
+    boxShadow: 'var(--llc-shadow-xs)',
+    color: error ? dangerColor : (isCutTimeManualSet ? 'var(--llc-text-primary)' : 'var(--llc-text-secondary)'),
   }), [border, error, isCutTimeManualSet, isStart]);
 
   function renderValue() {

@@ -1,0 +1,248 @@
+/**
+ * LosslessCut Design Tokens & Theme Architecture
+ * Single source of truth for design tokens, typography, hierarchy, elevations, and themes.
+ */
+
+:root {
+  /* ==========================================================================
+     1. TYPOGRAPHY DEFINITION
+     ========================================================================== */
+  --llc-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Open Sans', system-ui, sans-serif;
+  --llc-font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Roboto Mono', Menlo, Consolas, monospace;
+
+  /* Typographic Scale (Major Second 1.125 / Minor Third 1.2 hybrid for dense pro UI) */
+  --llc-text-3xs: 0.58rem; /* 9.3px - Timeline ticks */
+  --llc-text-2xs: 0.65rem; /* 10.4px - Micro badges & frame markers */
+  --llc-text-xs: 0.72rem;  /* 11.5px - Format pills, metadata, stream tags */
+  --llc-text-sm: 0.82rem;  /* 13.1px - Buttons, list items, secondary labels */
+  --llc-text-base: 0.90rem;/* 14.4px - Default body, form inputs, timecodes */
+  --llc-text-md: 1.05rem;  /* 16.8px - Section headers, card titles */
+  --llc-text-lg: 1.25rem;  /* 20.0px - Modal titles, sheet headers */
+  --llc-text-xl: 1.50rem;  /* 24.0px - Empty state headline */
+  --llc-text-2xl: 1.85rem; /* 29.6px - Hero display */
+
+  /* Font Weights */
+  --llc-weight-light: 300;
+  --llc-weight-normal: 400;
+  --llc-weight-medium: 500;
+  --llc-weight-semibold: 600;
+  --llc-weight-bold: 700;
+
+  /* Line Heights */
+  --llc-leading-none: 1.0;
+  --llc-leading-tight: 1.2;
+  --llc-leading-snug: 1.35;
+  --llc-leading-normal: 1.5;
+  --llc-leading-relaxed: 1.65;
+
+  /* Letter Spacing */
+  --llc-tracking-tighter: -0.04em;
+  --llc-tracking-tight: -0.02em;
+  --llc-tracking-normal: 0em;
+  --llc-tracking-wide: 0.03em;
+  --llc-tracking-wider: 0.06em;
+
+  /* ==========================================================================
+     2. SPATIAL RHYTHM / SPACING SCALE
+     ========================================================================== */
+  --llc-space-3xs: 2px;
+  --llc-space-2xs: 4px;
+  --llc-space-xs: 6px;
+  --llc-space-sm: 8px;
+  --llc-space-md: 12px;
+  --llc-space-lg: 16px;
+  --llc-space-xl: 20px;
+  --llc-space-2xl: 24px;
+  --llc-space-3xl: 32px;
+  --llc-space-4xl: 48px;
+
+  /* ==========================================================================
+     3. RADII & CURVATURE
+     ========================================================================== */
+  --llc-radius-none: 0px;
+  --llc-radius-xs: 3px;
+  --llc-radius-sm: 4px;
+  --llc-radius-md: 6px;
+  --llc-radius-lg: 8px;
+  --llc-radius-xl: 12px;
+  --llc-radius-2xl: 16px;
+  --llc-radius-3xl: 20px;
+  --llc-radius-full: 9999px;
+
+  /* ==========================================================================
+     4. MOTION & TRANSITIONS
+     ========================================================================== */
+  --llc-dur-instant: 75ms;
+  --llc-dur-fast: 150ms;
+  --llc-dur-normal: 220ms;
+  --llc-dur-slow: 350ms;
+  --llc-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --llc-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --llc-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --llc-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --llc-transition-base: all var(--llc-dur-fast) var(--llc-ease-standard);
+
+  /* ==========================================================================
+     5. Z-INDEX HIERARCHY
+     ========================================================================== */
+  --llc-z-underlay: -1;
+  --llc-z-base: 0;
+  --llc-z-waveform: 2;
+  --llc-z-timeline-seg: 4;
+  --llc-z-keyframe: 6;
+  --llc-z-playhead: 10;
+  --llc-z-dock: 25;
+  --llc-z-header: 40;
+  --llc-z-dropdown: 100;
+  --llc-z-modal-backdrop: 200;
+  --llc-z-modal: 201;
+  --llc-z-toast: 300;
+  --llc-z-tooltip: 400;
+
+  /* ==========================================================================
+     6. DEFAULT DARK THEME (CINEMATIC OBSIDIAN / PRO NLE)
+     ========================================================================== */
+  --llc-bg-canvas: #07090e;
+  --llc-bg-surface: #0e131f;
+  --llc-bg-surface-elevated: #141b2c;
+  --llc-bg-surface-hover: #1c253c;
+  --llc-bg-card: rgba(22, 30, 48, 0.7);
+  --llc-bg-card-hover: rgba(30, 41, 66, 0.9);
+  --llc-bg-glass: rgba(14, 19, 31, 0.75);
+  --llc-bg-glass-card: rgba(18, 24, 38, 0.75);
+  --llc-bg-dock: rgba(14, 19, 31, 0.7);
+  --llc-bg-overlay: rgba(5, 7, 12, 0.75);
+
+  /* Borders */
+  --llc-border-subtle: rgba(255, 255, 255, 0.08);
+  --llc-border-default: rgba(255, 255, 255, 0.14);
+  --llc-border-strong: rgba(255, 255, 255, 0.22);
+  --llc-border-active: rgba(56, 189, 248, 0.6);
+  --llc-border-glow: rgba(0, 243, 255, 0.4);
+
+  /* Foreground / Text */
+  --llc-text-primary: #f8fafc;
+  --llc-text-secondary: #94a3b8;
+  --llc-text-tertiary: #64748b;
+  --llc-text-muted: #475569;
+  --llc-text-inverse: #07090e;
+  --llc-text-accent: #38bdf8;
+
+  /* Accent & Brand (Cyan / Sky) */
+  --llc-accent: #0284c7;
+  --llc-accent-hover: #0369a1;
+  --llc-accent-active: #0c4a6e;
+  --llc-accent-subtle: rgba(2, 132, 199, 0.15);
+  --llc-accent-glow: rgba(14, 165, 233, 0.3);
+  --llc-accent-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  --llc-playhead-needle: #00f3ff;
+  --llc-playhead-glow: rgba(0, 243, 255, 0.7);
+
+  /* Semantic Status */
+  --llc-status-success: #10b981;
+  --llc-status-success-bg: rgba(16, 185, 129, 0.15);
+  --llc-status-success-border: rgba(16, 185, 129, 0.35);
+
+  --llc-status-warning: #f59e0b;
+  --llc-status-warning-bg: rgba(245, 158, 11, 0.15);
+  --llc-status-warning-border: rgba(245, 158, 11, 0.35);
+
+  --llc-status-danger: #ef4444;
+  --llc-status-danger-bg: rgba(239, 68, 68, 0.15);
+  --llc-status-danger-border: rgba(239, 68, 68, 0.35);
+
+  --llc-status-info: #38bdf8;
+  --llc-status-info-bg: rgba(56, 189, 248, 0.15);
+  --llc-status-info-border: rgba(56, 189, 248, 0.35);
+
+  /* Shadows & Depth */
+  --llc-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --llc-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --llc-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --llc-shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55);
+  --llc-shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.7);
+  --llc-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.25);
+  --llc-shadow-card-hover: 0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+/* ==========================================================================
+   7. LIGHT THEME DEFINITION (STUDIO CRISP FROSTED)
+   ========================================================================== */
+.radix-themes[data-appearance="light"],
+.light-theme {
+  --llc-bg-canvas: #f8fafc;
+  --llc-bg-surface: #f1f5f9;
+  --llc-bg-surface-elevated: #ffffff;
+  --llc-bg-surface-hover: #e2e8f0;
+  --llc-bg-card: rgba(255, 255, 255, 0.85);
+  --llc-bg-card-hover: rgba(248, 250, 252, 0.95);
+  --llc-bg-glass: rgba(255, 255, 255, 0.8);
+  --llc-bg-glass-card: rgba(255, 255, 255, 0.85);
+  --llc-bg-dock: rgba(241, 245, 249, 0.85);
+  --llc-bg-overlay: rgba(15, 23, 42, 0.35);
+
+  /* Borders */
+  --llc-border-subtle: rgba(0, 0, 0, 0.08);
+  --llc-border-default: rgba(0, 0, 0, 0.12);
+  --llc-border-strong: rgba(0, 0, 0, 0.2);
+  --llc-border-active: rgba(2, 132, 199, 0.65);
+  --llc-border-glow: rgba(2, 132, 199, 0.35);
+
+  /* Foreground / Text */
+  --llc-text-primary: #0f172a;
+  --llc-text-secondary: #475569;
+  --llc-text-tertiary: #64748b;
+  --llc-text-muted: #94a3b8;
+  --llc-text-inverse: #ffffff;
+  --llc-text-accent: #0284c7;
+
+  /* Accent & Brand */
+  --llc-accent: #0284c7;
+  --llc-accent-hover: #0369a1;
+  --llc-accent-active: #075985;
+  --llc-accent-subtle: rgba(2, 132, 199, 0.1);
+  --llc-accent-glow: rgba(2, 132, 199, 0.2);
+  --llc-accent-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  --llc-playhead-needle: #0284c7;
+  --llc-playhead-glow: rgba(2, 132, 199, 0.5);
+
+  /* Semantic Status */
+  --llc-status-success: #059669;
+  --llc-status-success-bg: rgba(5, 150, 105, 0.1);
+  --llc-status-success-border: rgba(5, 150, 105, 0.3);
+
+  --llc-status-warning: #d97706;
+  --llc-status-warning-bg: rgba(217, 119, 6, 0.1);
+  --llc-status-warning-border: rgba(217, 119, 6, 0.3);
+
+  --llc-status-danger: #dc2626;
+  --llc-status-danger-bg: rgba(220, 38, 38, 0.1);
+  --llc-status-danger-border: rgba(220, 38, 38, 0.3);
+
+  --llc-status-info: #0284c7;
+  --llc-status-info-bg: rgba(2, 132, 199, 0.1);
+  --llc-status-info-border: rgba(2, 132, 199, 0.3);
+
+  /* Shadows & Depth */
+  --llc-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --llc-shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.08);
+  --llc-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --llc-shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.12);
+  --llc-shadow-xl: 0 18px 40px rgba(0, 0, 0, 0.16);
+  --llc-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --llc-shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+/* ==========================================================================
+   8. HIGH CONTRAST ACCESSIBILITY THEME
+   ========================================================================== */
+[data-theme="high-contrast"] {
+  --llc-border-subtle: rgba(255, 255, 255, 0.4);
+  --llc-border-default: rgba(255, 255, 255, 0.7);
+  --llc-border-strong: #ffffff;
+  --llc-text-primary: #ffffff;
+  --llc-text-secondary: #e2e8f0;
+  --llc-text-tertiary: #cbd5e1;
+  --llc-playhead-needle: #00ffff;
+  --llc-playhead-glow: rgba(0, 255, 255, 1);
+}
