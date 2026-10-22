@@ -34,7 +34,8 @@ import MediaSourcePlayer from './MediaSourcePlayer';
 import TopMenu from './TopMenu';
 import LastCommands from './LastCommands';
 import StreamsSelector from './StreamsSelector';
-import SegmentList from './SegmentList';
+import StudioInspectorRail from './components/StudioInspectorRail';
+import StudioPlayerOsd from './components/StudioPlayerOsd';
 import Settings from './components/Settings';
 import Timeline from './Timeline';
 import BottomBar from './BottomBar';
@@ -2537,7 +2538,7 @@ function App() {
         <AppContext.Provider value={appContext}>
           <SegColorsContext.Provider value={segColorsContext}>
             <UserSettingsContext.Provider value={userSettingsContext}>
-              <div className={rootClass} style={rootStyle} id="app-root">
+              <div className={`${rootClass} studio-root-layout`} style={rootStyle} id="studio-root">
                 <TopMenu
                   filePath={filePath}
                   fileFormat={fileFormat}
@@ -2554,7 +2555,7 @@ function App() {
                   toggleDarkMode={toggleDarkMode}
                 />
 
-                <div style={{ flexGrow: 1, display: 'flex', overflowY: 'hidden' }}>
+                <div className="studio-workspace" style={{ flexGrow: 1, display: 'flex', overflowY: 'hidden' }}>
                   <AnimatePresence>
                     {showLeftBar && (
                       <BatchFilesList
@@ -2574,7 +2575,8 @@ function App() {
                   </AnimatePresence>
 
                   {/* Middle part (also shown in fullscreen): */}
-                  <div style={{ position: 'relative', flexGrow: 1, overflow: 'hidden' }} ref={videoContainerRef}>
+                  <div className="studio-player-stage" style={{ position: 'relative', flexGrow: 1, overflow: 'hidden' }} ref={videoContainerRef}>
+                    <div className="studio-ambient-glow" />
                     {!isFileOpened && <NoFileLoaded mifiLink={mifiLink} currentCutSeg={currentCutSeg} onClick={openFilesDialog} darkMode={darkMode} keyBindingByAction={keyBindingByAction} />}
 
                     <div className="no-user-select" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, visibility: !isFileOpened || !hasVideo || bigWaveformEnabled ? 'hidden' : undefined }} onWheel={onTimelineWheel}>
@@ -2623,8 +2625,21 @@ function App() {
                       </div>
                     )}
 
+                    {isFileOpened && hasVideo && !fullscreen && (
+                      <StudioPlayerOsd
+                        playing={playing}
+                        togglePlay={togglePlay}
+                        shortStep={shortStep}
+                        seekClosestKeyframe={seekClosestKeyframe}
+                        setCutStart={setCutStart}
+                        setCutEnd={setCutEnd}
+                        keyframesEnabled={keyframesEnabled}
+                        currentFrameKeyframe={currentFrame?.keyframe}
+                      />
+                    )}
+
                     {isFileOpened && (
-                      <div className="no-user-select" style={{ position: 'absolute', right: 0, bottom: 0, marginBottom: 10, display: 'flex', alignItems: 'flex-end' }}>
+                      <div className="no-user-select" style={{ position: 'absolute', right: 0, bottom: 0, marginBottom: 10, display: 'flex', alignItems: 'flex-end', zIndex: 30 }}>
                         <VolumeControl playbackVolume={playbackVolume} setPlaybackVolume={setPlaybackVolume} onToggleMutedClick={toggleMuted} />
 
                         {shouldShowPlaybackStreamSelector && (
@@ -2650,53 +2665,63 @@ function App() {
 
                   <AnimatePresence>
                     {showRightBar && isFileOpened && filePath != null && (
-                      <SegmentList
+                      <StudioInspectorRail
                         width={rightBarWidth}
-                        currentSegIndex={currentSegIndexSafe}
-                        cutSegments={cutSegments}
-                        inverseCutSegments={inverseCutSegments}
-                        getFrameCount={getFrameCount}
-                        formatTimecode={formatTimecode}
-                        onSegClick={setCurrentSegIndex}
-                        updateSegOrder={updateSegOrder}
-                        updateSegOrders={updateSegOrders}
-                        onLabelSegment={labelSegment}
-                        currentCutSeg={currentCutSeg}
-                        firstSegmentAtCursor={firstSegmentAtCursor}
-                        addSegment={addSegment}
-                        onDuplicateSegmentClick={duplicateSegment}
-                        removeSegment={removeSegment}
-                        onRemoveSelected={removeSelectedSegments}
-                        toggleSegmentsList={toggleSegmentsList}
-                        splitCurrentSegment={splitCurrentSegment}
-                        selectedSegments={segmentsOrInverse.selected}
-                        onSelectSingleSegment={selectOnlySegment}
-                        onToggleSegmentSelected={toggleSegmentSelected}
-                        onDeselectAllSegments={deselectAllSegments}
-                        onSelectAllSegments={selectAllSegments}
-                        onInvertSelectedSegments={invertSelectedSegments}
-                        onExtractSegmentsFramesAsImages={extractSegmentsFramesAsImages}
-                        onExtractSelectedSegmentsFramesAsImages={extractSelectedSegmentsFramesAsImages}
-                        jumpSegStart={jumpSegStart}
-                        jumpSegEnd={jumpSegEnd}
-                        onSelectSegmentsByLabel={selectSegmentsByLabel}
-                        onSelectSegmentsByExpr={selectSegmentsByExpr}
-                        onSelectAllMarkers={selectAllMarkers}
-                        onMutateSegmentsByExpr={mutateSegmentsByExpr}
-                        onLabelSelectedSegments={labelSelectedSegments}
-                        updateSegAtIndex={updateSegAtIndex}
-                        editingSegmentTags={editingSegmentTags}
-                        editingSegmentTagsSegmentIndex={editingSegmentTagsSegmentIndex}
-                        setEditingSegmentTags={setEditingSegmentTags}
-                        setEditingSegmentTagsSegmentIndex={setEditingSegmentTagsSegmentIndex}
-                        onEditSegmentTags={onEditSegmentTags}
-                        getSegEstimatedSize={getSegEstimatedSize}
+                        onExportPress={onExportPress}
+                        segmentsToExport={segmentsToExport}
+                        areWeCutting={areWeCutting}
+                        setStreamsSelectorShown={setStreamsSelectorShown}
+                        numStreamsToCopy={numStreamsToCopy}
+                        numStreamsTotal={numStreamsTotal}
+                        renderOutFmt={renderOutFmt}
+                        segmentListProps={{
+                          width: rightBarWidth,
+                          currentSegIndex: currentSegIndexSafe,
+                          cutSegments,
+                          inverseCutSegments,
+                          getFrameCount,
+                          formatTimecode,
+                          onSegClick: setCurrentSegIndex,
+                          updateSegOrder,
+                          updateSegOrders,
+                          onLabelSegment: labelSegment,
+                          currentCutSeg,
+                          firstSegmentAtCursor,
+                          addSegment,
+                          onDuplicateSegmentClick: duplicateSegment,
+                          removeSegment,
+                          onRemoveSelected: removeSelectedSegments,
+                          toggleSegmentsList,
+                          splitCurrentSegment,
+                          selectedSegments: segmentsOrInverse.selected,
+                          onSelectSingleSegment: selectOnlySegment,
+                          onToggleSegmentSelected: toggleSegmentSelected,
+                          onDeselectAllSegments: deselectAllSegments,
+                          onSelectAllSegments: selectAllSegments,
+                          onInvertSelectedSegments: invertSelectedSegments,
+                          onExtractSegmentsFramesAsImages: extractSegmentsFramesAsImages,
+                          onExtractSelectedSegmentsFramesAsImages: extractSelectedSegmentsFramesAsImages,
+                          jumpSegStart,
+                          jumpSegEnd,
+                          onSelectSegmentsByLabel: selectSegmentsByLabel,
+                          onSelectSegmentsByExpr: selectSegmentsByExpr,
+                          onSelectAllMarkers: selectAllMarkers,
+                          onMutateSegmentsByExpr: mutateSegmentsByExpr,
+                          onLabelSelectedSegments: labelSelectedSegments,
+                          updateSegAtIndex,
+                          editingSegmentTags,
+                          editingSegmentTagsSegmentIndex,
+                          setEditingSegmentTags,
+                          setEditingSegmentTagsSegmentIndex,
+                          onEditSegmentTags,
+                          getSegEstimatedSize,
+                        }}
                       />
                     )}
                   </AnimatePresence>
                 </div>
 
-                <div style={bottomStyle}>
+                <div style={bottomStyle} className="studio-precision-timeline">
                   <Timeline
                     shouldShowKeyframes={shouldShowKeyframes}
                     waveforms={waveforms}

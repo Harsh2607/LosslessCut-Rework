@@ -88,6 +88,14 @@ Lossless cuts can only start at a keyframe, so a cut starts at the keyframe befo
 - Basic [CLI](cli.md) and [HTTP API](api.md)
 - Simple and advanced mode, dark and light themes, and 26 languages
 
+## Interface & Layout
+
+- "Studio Wave" Pro-NLE workspace layout with unified 48px command header, dynamic media metadata capsule, workflow switcher tabs, and responsive layout matrix
+- Full responsive support for Ultrawide, Desktop, Laptop, Compact windows, and Portrait / Rotated vertical monitors (with automatic Vertical Stack layout)
+- Ergonomic floating quick-stepper & transport capsule centered directly on video canvas
+- Multi-tier precision timeline control surface with discrete keyframe diamonds, segment ribbons, and dual-channel waveform canvas
+- Pro 320px tabbed Inspector Rail with filmstrip cards, audio/stream matrix, and quick export profile
+
 ## Example use cases
 
 Everything here is lossless unless noted.

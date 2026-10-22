@@ -1,0 +1,517 @@
+/**
+ * LosslessCut Studio Wave Pro-NLE Layout Architecture
+ * Comprehensive spatial layout styles and responsive matrix definitions.
+ */
+
+/* ==========================================================================
+   1. STUDIO ROOT CONTAINER & ZONES
+   ========================================================================== */
+#studio-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--llc-bg-canvas);
+  color: var(--llc-text-primary);
+  font-family: var(--llc-font-sans);
+  position: relative;
+}
+
+/* ==========================================================================
+   2. ZONE 1: COMMAND HEADER (48px)
+   ========================================================================== */
+.studio-command-header {
+  height: 48px;
+  min-height: 48px;
+  border-bottom: 1px solid var(--llc-border-subtle);
+  background: var(--llc-bg-surface-elevated);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0 var(--llc-space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--llc-space-sm);
+  z-index: 30;
+  user-select: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.studio-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--llc-space-sm);
+  font-weight: var(--llc-weight-bold);
+  font-size: var(--llc-text-sm);
+  letter-spacing: -0.02em;
+}
+
+.studio-brand-logo {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--llc-radius-sm);
+  background: linear-gradient(135deg, #00f3ff, #0284c7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  font-weight: 800;
+  font-size: 11px;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.35);
+}
+
+.studio-brand-badge {
+  font-size: 10px;
+  font-weight: var(--llc-weight-bold);
+  color: var(--llc-accent);
+  background: rgba(0, 243, 255, 0.1);
+  border: 1px solid rgba(0, 243, 255, 0.25);
+  padding: 1px 5px;
+  border-radius: var(--llc-radius-sm);
+  letter-spacing: 0.05em;
+  margin-left: 4px;
+}
+
+.studio-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--llc-bg-surface);
+  border: 1px solid var(--llc-border-subtle);
+  border-radius: var(--llc-radius-full);
+  padding: 3px 10px;
+  font-size: var(--llc-text-xs);
+  color: var(--llc-text-secondary);
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.studio-meta-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  flex-shrink: 0;
+}
+
+.studio-workflow-tabs {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--llc-border-subtle);
+  border-radius: var(--llc-radius-md);
+  padding: 2px;
+  gap: 2px;
+}
+
+.studio-workflow-tab {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--llc-text-muted);
+  font-size: var(--llc-text-xs);
+  font-weight: var(--llc-weight-medium);
+  padding: 4px 10px;
+  border-radius: var(--llc-radius-sm);
+  cursor: pointer;
+  transition: var(--llc-transition-fast);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.studio-workflow-tab:hover {
+  color: var(--llc-text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.studio-workflow-tab.active {
+  background: var(--llc-accent);
+  color: #000000;
+  font-weight: var(--llc-weight-semibold);
+  box-shadow: 0 1px 4px rgba(0, 243, 255, 0.35);
+}
+
+.studio-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--llc-space-xs);
+}
+
+/* ==========================================================================
+   3. WORKSPACE CONTAINER (ZONES 2 & 3)
+   ========================================================================== */
+.studio-workspace {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+
+/* ==========================================================================
+   4. ZONE 2: CINEMATIC PLAYER STAGE
+   ========================================================================== */
+.studio-player-stage {
+  flex: 1;
+  background: #000000;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: var(--llc-space-sm);
+}
+
+.studio-ambient-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0, 243, 255, 0.12) 0%, rgba(2, 6, 23, 0.4) 60%, #000000 100%);
+  filter: blur(40px);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.studio-osd-telemetry {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.studio-telemetry-chip {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--llc-border-subtle);
+  border-radius: var(--llc-radius-full);
+  padding: 2px 8px;
+  font-family: var(--llc-font-mono);
+  font-size: 11px;
+  color: var(--llc-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.studio-telemetry-chip.accent {
+  color: var(--llc-accent);
+  border-color: rgba(0, 243, 255, 0.3);
+}
+
+.studio-telemetry-chip.success {
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.studio-osd-transport-pill {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10, 15, 26, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--llc-radius-full);
+  padding: 4px 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.2);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.studio-transport-action-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--llc-text-secondary);
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--llc-transition-fast);
+}
+
+.studio-transport-action-btn:hover {
+  color: var(--llc-text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.08);
+}
+
+.studio-transport-play-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--llc-accent);
+  border: none;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 14px var(--llc-accent-glow);
+  transition: transform 0.15s ease, filter 0.15s ease;
+  margin: 0 4px;
+}
+
+.studio-transport-play-btn:hover {
+  transform: scale(1.06);
+  filter: brightness(1.1);
+}
+
+.studio-transport-play-btn:active {
+  transform: scale(0.96);
+}
+
+.studio-transport-cut-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--llc-border-subtle);
+  color: var(--llc-text-primary);
+  font-size: 11px;
+  font-weight: var(--llc-weight-bold);
+  padding: 4px 8px;
+  border-radius: var(--llc-radius-sm);
+  cursor: pointer;
+  transition: var(--llc-transition-fast);
+}
+
+.studio-transport-cut-btn:hover {
+  background: var(--llc-accent);
+  color: #000000;
+  border-color: var(--llc-accent);
+}
+
+/* ==========================================================================
+   5. ZONE 3: STUDIO INSPECTOR RAIL (320px)
+   ========================================================================== */
+.studio-inspector-rail {
+  width: 320px;
+  min-width: 300px;
+  background: var(--llc-bg-surface-elevated);
+  border-left: 1px solid var(--llc-border-subtle);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.studio-rail-header {
+  height: 42px;
+  min-height: 42px;
+  border-bottom: 1px solid var(--llc-border-subtle);
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--llc-space-sm);
+  user-select: none;
+}
+
+.studio-rail-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.studio-rail-tab-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: var(--llc-text-xs);
+  font-weight: var(--llc-weight-semibold);
+  color: var(--llc-text-muted);
+  padding: 6px 8px;
+  border-radius: var(--llc-radius-sm);
+  cursor: pointer;
+  transition: var(--llc-transition-fast);
+}
+
+.studio-rail-tab-btn:hover {
+  color: var(--llc-text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.studio-rail-tab-btn.active {
+  color: var(--llc-accent);
+  background: rgba(0, 243, 255, 0.08);
+}
+
+.studio-rail-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--llc-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--llc-space-xs);
+}
+
+.studio-rail-footer {
+  border-top: 1px solid var(--llc-border-subtle);
+  background: rgba(0, 0, 0, 0.3);
+  padding: var(--llc-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--llc-space-xs);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   6. ZONE 4: PRECISION TIMELINE CONTROL SURFACE (160px)
+   ========================================================================== */
+.studio-precision-timeline {
+  height: 160px;
+  min-height: 140px;
+  background: var(--llc-bg-surface);
+  border-top: 1px solid var(--llc-border-subtle);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+  user-select: none;
+  flex-shrink: 0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.studio-timeline-ruler-bar {
+  height: 24px;
+  min-height: 24px;
+  border-bottom: 1px solid var(--llc-border-subtle);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0 var(--llc-space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--llc-font-mono);
+  font-size: 11px;
+  color: var(--llc-text-muted);
+}
+
+.studio-timeline-tracks {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--llc-space-sm);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.studio-timeline-needle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--llc-accent);
+  box-shadow: 0 0 12px var(--llc-accent-glow), 0 0 4px var(--llc-accent);
+  z-index: 25;
+  pointer-events: none;
+}
+
+.studio-timeline-needle-head {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  background: var(--llc-accent);
+  transform: rotate(45deg);
+  border: 1px solid #000000;
+  box-shadow: 0 0 8px var(--llc-accent-glow);
+}
+
+.studio-timeline-telemetry-deck {
+  height: 28px;
+  min-height: 28px;
+  border-top: 1px solid var(--llc-border-subtle);
+  background: var(--llc-bg-surface-elevated);
+  padding: 0 var(--llc-space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--llc-font-mono);
+  font-size: 11px;
+  color: var(--llc-text-secondary);
+}
+
+/* ==========================================================================
+   7. RESPONSIVE BREAKPOINTS & PORTRAIT MONITOR ADAPTATION
+   ========================================================================== */
+
+/* Ultrawide Displays (≥ 2200px) */
+@media (min-width: 2200px) {
+  .studio-inspector-rail {
+    width: 380px;
+  }
+  .studio-precision-timeline {
+    height: 180px;
+  }
+}
+
+/* Standard Laptop Screens (≤ 1366px) */
+@media (max-width: 1366px) {
+  .studio-inspector-rail {
+    width: 280px;
+  }
+  .studio-precision-timeline {
+    height: 140px;
+  }
+}
+
+/* Compact Screens (≤ 1024px) */
+@media (max-width: 1024px) {
+  .studio-inspector-rail.collapsed {
+    width: 0px !important;
+    min-width: 0px !important;
+    border-left: none;
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   PORTRAIT MONITOR & ROTATED DISPLAYS (Height > Width or Aspect-Ratio < 1/1)
+   CRITICAL REVOLUTIONARY ADAPTATION: Switch to Vertical Stack Studio!
+   -------------------------------------------------------------------------- */
+@media (orientation: portrait), (max-aspect-ratio: 1/1) {
+  .studio-workspace {
+    flex-direction: column !important;
+  }
+
+  .studio-player-stage {
+    flex: 1 1 45% !important;
+    min-height: 260px;
+  }
+
+  .studio-inspector-rail {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 240px !important;
+    min-height: 200px;
+    border-left: none !important;
+    border-top: 1px solid var(--llc-border-subtle) !important;
+    flex: 0 0 auto;
+  }
+
+  .studio-rail-body {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .studio-precision-timeline {
+    height: 150px !important;
+  }
+}

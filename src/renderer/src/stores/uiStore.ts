@@ -3,7 +3,10 @@ import type { TunerType } from '../types';
 
 export const mediaSourceQualitiesCount = 3;
 
+export type StudioWorkflowMode = 'cuts' | 'tracks' | 'export';
+
 interface UIState {
+  studioWorkflowMode: StudioWorkflowMode;
   streamsSelectorShown: boolean;
   concatDialogOpen: boolean;
   settingsVisible: boolean;
@@ -18,6 +21,7 @@ interface UIState {
   maxKeyframes: number;
 
   // Actions
+  setStudioWorkflowMode: (mode: StudioWorkflowMode) => void;
   setStreamsSelectorShown: (shown: boolean | ((prev: boolean) => boolean)) => void;
   setConcatDialogOpen: (open: boolean) => void;
   setSettingsVisible: (visible: boolean | ((prev: boolean) => boolean)) => void;
@@ -33,6 +37,7 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
+  studioWorkflowMode: 'cuts',
   streamsSelectorShown: false,
   concatDialogOpen: false,
   settingsVisible: false,
@@ -46,6 +51,7 @@ export const useUIStore = create<UIState>((set) => ({
   encBitrate: undefined,
   maxKeyframes: 10000,
 
+  setStudioWorkflowMode: (studioWorkflowMode) => set({ studioWorkflowMode }),
   setStreamsSelectorShown: (shown) => set((s) => ({ streamsSelectorShown: typeof shown === 'function' ? shown(s.streamsSelectorShown) : shown })),
   setConcatDialogOpen: (concatDialogOpen) => set({ concatDialogOpen }),
   setSettingsVisible: (visible) => set((s) => ({ settingsVisible: typeof visible === 'function' ? visible(s.settingsVisible) : visible })),
