@@ -27,7 +27,7 @@ import logger from './logger.js';
 import menu from './menu.js';
 import * as configStore from './configStore.js';
 import { isLinux, isWindows, isMac, platform, arch, pathExists, resolveCliFileArgs, parseCliKeyboardActionArgs, parseSettingsJson } from './util.js';
-import { appName } from './common.js';
+import { appName, type AppEvent } from './common.js';
 import attachContextMenu from './contextMenu.js';
 import HttpServer from './httpServer.js';
 import isDev from './isDev.js';
@@ -101,13 +101,7 @@ async function sendApiAction(action: string, args?: unknown[]) {
   }
 }
 
-export type AppEvent = {
-  eventName: 'export-complete',
-  paths?: string[],
-} | {
-  eventName: 'export-start',
-  path: string,
-}
+export type { AppEvent } from './common.js';
 
 const appEventEmitter = mitt<{ appEvent: AppEvent }>();
 

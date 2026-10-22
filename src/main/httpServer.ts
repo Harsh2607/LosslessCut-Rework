@@ -7,7 +7,7 @@ import type { BrowserWindow } from 'electron';
 import { homepageUrl } from '../common/constants.js';
 import logger from './logger.js';
 import { isRequestAllowed } from './httpServerUtil.js';
-import type { AppEvent } from './index.js';
+import type { AppEvent } from './common.js';
 
 export default ({ port, onKeyboardAction, onAwaitAppEvent, getMainWindow }: {
   port: number,

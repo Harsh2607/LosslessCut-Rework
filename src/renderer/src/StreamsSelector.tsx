@@ -13,7 +13,6 @@ import * as DropdownMenu from './components/DropdownMenu';
 import * as Dialog from './components/Dialog';
 import AutoExportToggler from './components/AutoExportToggler';
 import Select from './components/Select';
-import type { FileStream } from './ffmpeg';
 import { getStreamFps } from './ffmpeg';
 import { getActiveDisposition, attachedPicDisposition, isGpsStream, isMov, hasFileEdits, hasStreamEdits } from './util/streams';
 import { fileMetadataKeys, getCodecTagSuggestions, getCopyableMetadata, getEffectiveMetadata, getLanguageSuggestions, getNonNativeMovMetadataKeys, isValidCodecTag, isValidCreationTime, isValidLanguageCode, needsHvc1Tag, streamMetadataKeys } from './util/metadata';
@@ -22,7 +21,7 @@ import TagEditor, { cancelTagEditOnEscape, type TagInfo } from './components/Tag
 import SuggestionTextField from './components/SuggestionTextField';
 import Warning from './components/Warning';
 import type { FFprobeChapter, FFprobeFormat, FFprobeStream } from '../../common/ffprobe';
-import { contentDispositionOptionsSchema, deleteDispositionValue, dispositionOptions, type ContentDispositionOptions, type FileParams, type FilesMeta, type FormatTimecode, type ParamsByFile, type StreamParams } from './types';
+import { contentDispositionOptionsSchema, deleteDispositionValue, dispositionOptions, type ContentDispositionOptions, type FileParams, type FilesMeta, type FileStream, type FormatTimecode, type ParamsByFile, type StreamParams } from './types';
 import Button, { DialogButton } from './components/Button';
 import styles from './StreamsSelector.module.css';
 import Json5Dialog from './components/Json5Dialog';

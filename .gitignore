@@ -29,6 +29,7 @@ test-sample*
 *.llc
 .scannerwork/
 /coverage
+/reports
 /test-results
 /playwright-report
 sonar_issues.json

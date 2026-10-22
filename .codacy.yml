@@ -1,0 +1,21 @@
+---
+engines:
+  eslint:
+    enabled: true
+    configFile: .eslintrc.cjs
+  duplication:
+    enabled: true
+    exclude_paths:
+      - "test/**"
+      - "dist/**"
+      - "out/**"
+      - "coverage/**"
+      - "reports/**"
+
+exclude_paths:
+  - "dist/**"
+  - "out/**"
+  - "coverage/**"
+  - "reports/**"
+  - "node_modules/**"
+  - "website/**"

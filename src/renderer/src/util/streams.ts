@@ -1,8 +1,7 @@
 import invariant from 'tiny-invariant';
 import type { FFprobeStream, FFprobeStreamDisposition } from '../../../common/ffprobe';
 import type { AvoidNegativeTs } from '../../../common/types';
-import type { AllFilesMeta, BsfAspectRatioParams, BsfCropParams, ChromiumHTMLAudioElement, ChromiumHTMLVideoElement, CopyfileStreams, FileParams, LiteFFprobeStream, StreamParams } from '../types';
-import type { FileStream } from '../ffmpeg';
+import type { AllFilesMeta, BsfAspectRatioParams, BsfCropParams, ChromiumHTMLAudioElement, ChromiumHTMLVideoElement, CopyfileStreams, FileParams, FileStream, LiteFFprobeStream, StreamParams } from '../types';
 
 
 // taken from `ffmpeg -codecs`

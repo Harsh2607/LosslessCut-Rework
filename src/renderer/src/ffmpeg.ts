@@ -360,8 +360,7 @@ export async function readFileFfprobeMeta(filePath: string) {
   }
 }
 
-export type FileFfprobeMeta = Awaited<ReturnType<typeof readFileFfprobeMeta>>;
-export type FileStream = FileFfprobeMeta['streams'][number];
+export type { FileFfprobeMeta, FileStream } from './types';
 
 async function renderThumbnail(filePath: string, timestamp: number, signal: AbortSignal) {
   const args = [

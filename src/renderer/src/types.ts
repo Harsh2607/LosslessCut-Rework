@@ -1,7 +1,14 @@
 import type { MenuItem, MenuItemConstructorOptions } from 'electron';
 import { z } from 'zod';
 import type { FFprobeChapter, FFprobeFormat, FFprobeStream } from '../../common/ffprobe';
-import type { FileStream } from './ffmpeg';
+
+export type FileStream = FFprobeStream & { guessedType?: 'dji-gps-srt' | undefined };
+
+export interface FileFfprobeMeta {
+  format: FFprobeFormat;
+  streams: FileStream[];
+  chapters: FFprobeChapter[];
+}
 
 
 export interface ChromiumHTMLVideoElement extends HTMLVideoElement {

@@ -1,0 +1,16 @@
+version: "1.0"
+linter: jetbrains/qodana-js-community:latest
+profile:
+  name: qodana.recommended
+include:
+  - name: TypeScript
+  - name: JavaScript
+exclude:
+  - name: All
+    paths:
+      - dist
+      - out
+      - coverage
+      - reports
+      - node_modules
+      - website

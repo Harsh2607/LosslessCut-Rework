@@ -1,0 +1,26 @@
+version = 1
+
+test_patterns = [
+  "test/**",
+  "**/*.test.ts",
+  "**/*.test.tsx",
+  "**/*.spec.ts"
+]
+
+exclude_patterns = [
+  "dist/**",
+  "out/**",
+  "coverage/**",
+  "reports/**",
+  "node_modules/**",
+  "website/**"
+]
+
+[[analyzers]]
+name = "javascript"
+enabled = true
+
+  [analyzers.meta]
+  environment = ["nodejs", "browser"]
+  plugins = ["react"]
+  dialect = "typescript"

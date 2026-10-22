@@ -1,10 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": [
-    "src/main/index.ts",
-    "src/preload/index.ts",
-    "src/renderer/src/index.tsx",
     "src/renderer/src/stores/index.ts",
+    "src/renderer/src/ffprobe.ts",
     "script/**/*.{ts,js}"
   ],
   "project": [
@@ -13,18 +11,11 @@
   ],
   "ignoreDependencies": [
     "@radix-ui/colors",
-    "@fontsource/open-sans",
     "@types/*",
     "electron",
     "playwright-core",
-    "@biomejs/biome",
-    "@commitlint/*",
-    "@playwright/test",
     "@axe-core/playwright",
-    "lefthook",
-    "cross-env",
-    "rollup-plugin-visualizer",
-    "type-coverage"
+    "lefthook"
   ],
   "ignoreBinaries": [
     "rimraf",
