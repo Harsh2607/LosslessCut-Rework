@@ -2,13 +2,33 @@
   all: unset;
   cursor: pointer;
   color: white;
-  border-radius: .3em;
-  padding-bottom: .1em;
-  padding-left: .4em;
-  padding-right: .4em;
+  border-radius: 6px;
+  padding: 4px 14px;
   white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.88em;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.exportButton:focus {
-  outline: .1em solid white;
+.exportButton:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.exportButton:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.3);
+}
+
+.exportButton:focus-visible {
+  outline: 2px solid var(--cyan-9);
+  outline-offset: 2px;
 }

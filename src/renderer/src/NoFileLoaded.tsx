@@ -1,16 +1,14 @@
 import { Fragment, memo, useMemo, useState } from 'react';
 import type { MotionStyle } from 'motion/react';
 import { motion } from 'motion/react';
-import { FaMouse } from 'react-icons/fa';
+import { FiUploadCloud, FiFilm } from 'react-icons/fi';
 import { useTranslation, Trans } from 'react-i18next';
 
-import SetCutpointButton from './components/SetCutpointButton';
 import SimpleModeButton from './components/SimpleModeButton';
 import useUserSettings from './hooks/useUserSettings';
 import type { StateSegment } from './types';
 import type { KeyBinding } from '../../common/types';
 import { splitKeyboardKeys } from './util';
-import { getModifier } from './hooks/useTimelineScroll';
 import Kbd from './components/Kbd';
 import mainApi from './mainApi';
 
@@ -25,25 +23,20 @@ function Keys({ keys }: { keys: string | undefined }) {
   ));
 }
 
-const dropzoneStyle: MotionStyle = {
+const containerStyle: MotionStyle = {
   position: 'absolute',
-  left: 0,
-  right: 0,
-  top: 0,
-  bottom: 0,
-  color: 'var(--gray-12)',
-  margin: '2em',
+  inset: 0,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  whiteSpace: 'nowrap',
-  borderWidth: '.7em',
-  borderStyle: 'dashed',
-  borderColor: 'var(--gray-3)',
+  padding: '2em',
+  background: 'radial-gradient(ellipse at 50% 45%, rgba(2, 132, 199, 0.12) 0%, rgba(0, 0, 0, 0) 70%)',
 };
 
-function NoFileLoaded({ mifiLink, currentCutSeg, onClick, darkMode, keyBindingByAction }: {
+const supportedFormats = ['MP4', 'MKV', 'MOV', 'WEBM', 'MP3', 'WAV', 'M4A', 'FLAC'];
+
+function NoFileLoaded({ mifiLink, currentCutSeg: _currentCutSeg, onClick, darkMode, keyBindingByAction }: {
   mifiLink: unknown,
   currentCutSeg: StateSegment | undefined,
   onClick: () => void,
@@ -51,47 +44,91 @@ function NoFileLoaded({ mifiLink, currentCutSeg, onClick, darkMode, keyBindingBy
   keyBindingByAction: Record<string, KeyBinding>,
 }) {
   const { t } = useTranslation();
-  const { simpleMode, segmentMouseModifierKey } = useUserSettings();
+  const { simpleMode } = useUserSettings();
   const [dragging, setDragging] = useState(false);
 
-  const currentCutSegOrDefault = useMemo(() => currentCutSeg ?? { segColorIndex: 0 }, [currentCutSeg]);
+  const isMac = useMemo(() => typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform), []);
 
   return (
-    <motion.div
-      className="no-user-select"
-      style={dropzoneStyle}
-      animate={{ borderColor: dragging ? 'var(--gray-9)' : 'var(--gray-3)' }}
-      onDragOver={() => setDragging(true)}
-      onDragLeave={() => setDragging(false)}
-      role="button"
-      onClick={onClick}
-    >
-      <div style={{ fontSize: '1.7em', textTransform: 'uppercase', color: 'var(--gray-11)', marginBottom: '.1em' }}>{t('DROP FILE(S)')}</div>
+    <div className="no-user-select" style={containerStyle as React.CSSProperties}>
+      <motion.div
+        className={`pro-dropzone-card ${dragging ? 'pro-dropzone-dragging' : ''}`}
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        role="button"
+        tabIndex={0}
+        onClick={onClick}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); }}
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+      >
+        <div
+          style={{
+            width: 72,
+            height: 72,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.25) 0%, rgba(14, 165, 233, 0.1) 100%)',
+            border: '1px solid rgba(56, 189, 248, 0.4)',
+            boxShadow: '0 0 24px rgba(2, 132, 199, 0.35)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#38bdf8',
+            fontSize: 32,
+            marginBottom: '1.2em',
+          }}
+        >
+          {dragging ? <FiUploadCloud /> : <FiFilm />}
+        </div>
 
-      <div style={{ fontSize: '1.3em', color: 'var(--gray-11)', marginBottom: '.1em' }}>
-        <Trans>See <b>Help</b> menu for help</Trans>
-      </div>
+        <div style={{ fontSize: '1.45em', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--gray-12)', marginBottom: '.3em', textAlign: 'center' }}>
+          {dragging ? t('Release to open media') : t('Drop media file here')}
+        </div>
 
-      <div style={{ fontSize: '1.3em', color: 'var(--gray-11)' }}>
-        <Trans><SetCutpointButton currentCutSeg={currentCutSegOrDefault} side="start" style={{ verticalAlign: 'middle' }} /> <SetCutpointButton currentCutSeg={currentCutSegOrDefault} side="end" style={{ verticalAlign: 'middle' }} />, <Keys keys={keyBindingByAction['setCutStart']?.keys} /> <Keys keys={keyBindingByAction['setCutEnd']?.keys} /> or <span><kbd style={{ marginRight: '.1em' }}>{getModifier(segmentMouseModifierKey)}</kbd></span>+<FaMouse style={{ marginRight: '.1em', verticalAlign: 'middle' }} /> to set cutpoints</Trans>
-      </div>
+        <div style={{ fontSize: '0.92em', color: 'var(--gray-11)', marginBottom: '1.2em', textAlign: 'center' }}>
+          <Trans>or click anywhere to browse files</Trans>
+          <span style={{ marginLeft: '.5em' }}>
+            <kbd>{isMac ? '⌘' : 'Ctrl'}</kbd> + <kbd>O</kbd>
+          </span>
+        </div>
 
-      <div style={{ fontSize: '1.3em', color: 'var(--gray-11)' }} role="button" onClick={(e) => e.stopPropagation()}>
-        {simpleMode ? (
-          <Trans><SimpleModeButton style={{ verticalAlign: 'middle' }} /> to show advanced view</Trans>
-        ) : (
-          <Trans><SimpleModeButton style={{ verticalAlign: 'middle' }} /> to show simple view</Trans>
-        )}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center', maxWidth: 420, marginBottom: '1.2em' }}>
+          {supportedFormats.map((fmt) => (
+            <span key={fmt} className="format-pill">{fmt}</span>
+          ))}
+        </div>
+
+        <div style={{ fontSize: '0.78em', color: 'var(--cyan-11)', opacity: 0.85, fontWeight: 500, letterSpacing: '0.02em', textAlign: 'center' }}>
+          ⚡ {t('Lossless stream-copy')} • {t('Zero quality loss')} • {t('Instant export')}
+        </div>
+      </motion.div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1em', marginTop: '1.5em', fontSize: '0.85em', color: 'var(--gray-11)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.4em' }}>
+          <span><Trans>Shortcuts:</Trans></span>
+          <span><Keys keys={keyBindingByAction['setCutStart']?.keys} /> <span style={{ opacity: 0.7 }}>{t('Start')}</span></span>
+          <span>•</span>
+          <span><Keys keys={keyBindingByAction['setCutEnd']?.keys} /> <span style={{ opacity: 0.7 }}>{t('End')}</span></span>
+          <span>•</span>
+          <span><Keys keys={keyBindingByAction['togglePlayResetSpeed']?.keys} /> <span style={{ opacity: 0.7 }}>{t('Play')}</span></span>
+        </div>
+
+        <span>•</span>
+
+        <div role="button" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', alignItems: 'center', gap: '.4em' }}>
+          <SimpleModeButton style={{ verticalAlign: 'middle' }} />
+          <span>{simpleMode ? t('Show advanced view') : t('Show simple view')}</span>
+        </div>
       </div>
 
       {mifiLink && typeof mifiLink === 'object' && 'loadUrl' in mifiLink && typeof mifiLink.loadUrl === 'string' && mifiLink.loadUrl ? (
-        <div style={{ position: 'relative', margin: '.3em', width: '24em', height: '8em' }}>
+        <div style={{ position: 'relative', marginTop: '1em', width: '24em', height: '6em' }}>
           <iframe src={`${mifiLink.loadUrl}#dark=${darkMode ? 'true' : 'false'}`} title="iframe" style={{ background: 'rgba(0,0,0,0)', border: 'none', pointerEvents: 'none', width: '100%', height: '100%', position: 'absolute', colorScheme: 'initial' }} />
           {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus */}
           <div style={{ width: '100%', height: '100%', position: 'absolute', cursor: 'pointer' }} title={t('Open link in browser')} role="button" onClick={(e) => { e.stopPropagation(); if ('targetUrl' in mifiLink && typeof mifiLink.targetUrl === 'string') mainApi.openExternal(mifiLink.targetUrl); }} />
         </div>
       ) : undefined}
-    </motion.div>
+    </div>
   );
 }
 

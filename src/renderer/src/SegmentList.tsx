@@ -28,7 +28,13 @@ import getSwal from './swal';
 
 
 const buttonBaseStyle: CSSProperties = {
-  margin: '0 3px', borderRadius: 3, color: 'white', cursor: 'pointer', userSelect: 'none',
+  margin: '0 3px',
+  borderRadius: 6,
+  color: 'white',
+  cursor: 'pointer',
+  userSelect: 'none',
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.25)',
+  transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
 };
 
 const disabledButtonStyle = { color: 'var(--gray-10)', backgroundColor: 'var(--gray-6)' };
@@ -497,9 +503,9 @@ function SegmentList({
           )}
         </div>
 
-        <div style={{ padding: '5px 10px', boxSizing: 'border-box', borderBottom: '1px solid var(--gray-6)', borderTop: '1px solid var(--gray-6)', display: 'flex', justifyContent: 'space-between', fontSize: '.8em' }}>
-          <div>{t('Segments total:')}</div>
-          <div>{formatTimecode({ seconds: segmentsTotal })}</div>
+        <div style={{ padding: '8px 12px', boxSizing: 'border-box', borderBottom: '1px solid var(--gray-6)', borderTop: '1px solid var(--gray-6)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '.85em', background: 'var(--gray-2)' }}>
+          <div style={{ fontWeight: 500, color: 'var(--gray-11)' }}>{t('Segments total:')}</div>
+          <div className="timecode-badge" style={{ padding: '2px 8px', fontSize: '0.88em' }}>{formatTimecode({ seconds: segmentsTotal })}</div>
         </div>
       </>
     );

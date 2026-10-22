@@ -237,21 +237,23 @@ const CutTimeInput = memo(({ disabled, darkMode, cutTime, setCutTime, startTimeO
 
   const style = useMemo<CSSProperties>(() => ({
     border,
-    borderRadius: 5,
-    backgroundColor: 'var(--gray-5)',
+    borderRadius: 6,
+    backgroundColor: 'var(--gray-4)',
     transition: darkModeTransition,
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: 500,
     textAlign: 'center',
-    padding: '1px 3px',
+    padding: '3px 6px',
     marginTop: 0,
     marginBottom: 0,
     marginLeft: isStart ? 0 : 5,
     marginRight: isStart ? 5 : 0,
     boxSizing: 'border-box',
-    fontFamily: 'monospace',
-    letterSpacing: '-.05em',
-    width: 94,
+    fontFamily: "'SF Mono', 'Fira Code', 'Roboto Mono', Menlo, monospace",
+    letterSpacing: '-.02em',
+    width: 96,
     outline: 'none',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
     color: error ? dangerColor : (isCutTimeManualSet ? 'var(--gray-12)' : 'var(--gray-11)'),
   }), [border, error, isCutTimeManualSet, isStart]);
 
@@ -502,49 +504,66 @@ function BottomBar({
 
         {!simpleMode && <CutTimeInput disabled={!isFileOpened} darkMode={darkMode} currentCutSeg={currentCutSeg} startTimeOffset={startTimeOffset} seekAbs={seekAbs} cutTime={currentCutSeg?.start} setCutTime={setCutTime} isStart formatTimecode={formatTimecode} parseTimecode={parseTimecode} />}
 
-        {keyframesEnabled && (
-          <IoMdKey
-            size={25}
-            role="button"
-            title={actionTitle(t('Seek previous keyframe'), 'seekBackwardsKeyframe')}
-            style={{ flexShrink: 0, marginRight: 2, transform: mirrorTransform, ...keyframeStyle }}
-            onClick={() => seekClosestKeyframe(-1)}
-          />
-        )}
+        <div className="transport-dock">
+          {keyframesEnabled && (
+            <div
+              className="transport-dock-btn"
+              role="button"
+              title={actionTitle(t('Seek previous keyframe'), 'seekBackwardsKeyframe')}
+              onClick={() => seekClosestKeyframe(-1)}
+            >
+              <IoMdKey
+                size={18}
+                style={{ transform: mirrorTransform, ...keyframeStyle }}
+              />
+            </div>
+          )}
 
-        {!simpleMode && (
-          <FaCaretLeft
-            style={{ flexShrink: 0, marginLeft: -6, marginRight: -4 }}
-            size={28}
-            role="button"
-            title={actionTitle(t('One frame back'), 'seekPreviousFrame')}
-            onClick={() => shortStep(-1)}
-          />
-        )}
+          {!simpleMode && (
+            <div
+              className="transport-dock-btn"
+              role="button"
+              title={actionTitle(t('One frame back'), 'seekPreviousFrame')}
+              onClick={() => shortStep(-1)}
+            >
+              <FaCaretLeft size={20} />
+            </div>
+          )}
 
-        <div title={actionTitle(t('Play/pause'), 'togglePlayResetSpeed')} role="button" onClick={() => togglePlay()} style={{ ...playStyle, margin: '.1em .1em 0 .2em', background: primaryColor }}>
-          <PlayPause style={{ fontSize: '.9em' }} />
+          <div
+            title={actionTitle(t('Play/pause'), 'togglePlayResetSpeed')}
+            role="button"
+            onClick={() => togglePlay()}
+            style={{ ...playStyle, margin: '0 2px', background: primaryColor }}
+          >
+            <PlayPause style={{ fontSize: '.9em' }} />
+          </div>
+
+          {!simpleMode && (
+            <div
+              className="transport-dock-btn"
+              role="button"
+              title={actionTitle(t('One frame forward'), 'seekNextFrame')}
+              onClick={() => shortStep(1)}
+            >
+              <FaCaretRight size={20} />
+            </div>
+          )}
+
+          {keyframesEnabled && (
+            <div
+              className="transport-dock-btn"
+              role="button"
+              title={actionTitle(t('Seek next keyframe'), 'seekForwardsKeyframe')}
+              onClick={() => seekClosestKeyframe(1)}
+            >
+              <IoMdKey
+                size={18}
+                style={keyframeStyle}
+              />
+            </div>
+          )}
         </div>
-
-        {!simpleMode && (
-          <FaCaretRight
-            style={{ flexShrink: 0, marginRight: -6, marginLeft: -4 }}
-            size={28}
-            role="button"
-            title={actionTitle(t('One frame forward'), 'seekNextFrame')}
-            onClick={() => shortStep(1)}
-          />
-        )}
-
-        {keyframesEnabled && (
-          <IoMdKey
-            style={{ flexShrink: 0, marginLeft: 2, ...keyframeStyle }}
-            size={25}
-            role="button"
-            title={actionTitle(t('Seek next keyframe'), 'seekForwardsKeyframe')}
-            onClick={() => seekClosestKeyframe(1)}
-          />
-        )}
 
         {!simpleMode && <CutTimeInput disabled={!isFileOpened} darkMode={darkMode} currentCutSeg={currentCutSeg} startTimeOffset={startTimeOffset} seekAbs={seekAbs} cutTime={currentCutSeg?.end} setCutTime={setCutTime} formatTimecode={formatTimecode} parseTimecode={parseTimecode} />}
 

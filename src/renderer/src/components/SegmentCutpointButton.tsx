@@ -27,7 +27,20 @@ const SegmentCutpointButton = ({ currentCutSeg, side, Icon, onClick, title, styl
       size={13}
       title={title as string}
       role="button"
-      style={{ flexShrink: 0, color: 'white', padding: start ? '4px 4px 4px 2px' : '4px 2px 4px 4px', borderLeft: start ? border : undefined, borderRight: !start ? border : undefined, background: backgroundColor, borderRadius: 6, ...style }}
+      style={{
+        flexShrink: 0,
+        color: 'white',
+        cursor: 'pointer',
+        padding: start ? '4px 5px 4px 3px' : '4px 3px 4px 5px',
+        borderLeft: start ? border : undefined,
+        borderRight: !start ? border : undefined,
+        background: backgroundColor,
+        borderRadius: 6,
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.25)',
+        transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+        userSelect: 'none',
+        ...style,
+      }}
       onClick={onClick}
     />
   );

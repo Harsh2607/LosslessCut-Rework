@@ -26,8 +26,6 @@ import { calculateTimelinePercent as calculateTimelinePercent2, calculateTimelin
 type CalculateTimelinePercent = (time: number) => string | undefined;
 
 const currentTimeWidth = 1;
-// contrasting outline, so that the cursor/keyframes are visible on top of any segment color, in both light and dark mode #1199
-const outlineShadow = '0 0 0 1px var(--gray-1)';
 
 // eslint-disable-next-line react/display-name
 const Waveform = memo(({ waveform, calculateTimelinePercent, fileDurationNonZero, darkMode }: {
@@ -453,7 +451,20 @@ function Timeline({
           ))}
 
           {currentTimePercent !== undefined && (
-            <motion.div transition={springAnimation} animate={{ left: currentTimePercent }} style={{ position: 'absolute', bottom: 0, top: 0, backgroundColor: 'var(--gray-12)', width: currentTimeWidth, boxShadow: outlineShadow, pointerEvents: 'none' }} />
+            <motion.div
+              transition={springAnimation}
+              animate={{ left: currentTimePercent }}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                top: 0,
+                backgroundColor: '#38bdf8',
+                width: 2,
+                boxShadow: '0 0 8px rgba(56, 189, 248, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.4)',
+                pointerEvents: 'none',
+                zIndex: 9,
+              }}
+            />
           )}
           {commandedTimePercent !== undefined && (
             <CommandedTime commandedTimePercent={commandedTimePercent} />

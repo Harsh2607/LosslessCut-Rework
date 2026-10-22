@@ -89,7 +89,18 @@ function TopMenu({
   return (
     <div
       className={`no-user-select ${styles['wrapper']}`}
-      style={{ background: controlsBackground, transition: darkModeTransition, display: 'flex', alignItems: 'center', padding: '.3em .3em', gap: '.3em', justifyContent: 'space-between', flexWrap: 'wrap' }}
+      style={{
+        background: controlsBackground,
+        borderBottom: '1px solid var(--gray-4)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.15)',
+        transition: darkModeTransition,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '5px 8px',
+        gap: '6px',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+      }}
     >
       {filePath && (
         <>
