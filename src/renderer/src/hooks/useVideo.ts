@@ -123,7 +123,7 @@ export default ({ filePath }: { filePath: string | undefined }) => {
       if (err instanceof Error && err.name === 'AbortError' && 'code' in err && err.code === 20) { // Probably "DOMException: The play() request was interrupted by a call to pause()."
         console.error(err);
       } else {
-        showPlaybackFailedMessage();
+        void showPlaybackFailedMessage();
       }
     });
   }, [filePath, outputPlaybackRate, playingRef, setPlaybackRate, videoRef]);

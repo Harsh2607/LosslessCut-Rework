@@ -36,7 +36,7 @@ export default function useUserSettingsRoot() {
       configStore.set(key, value);
     } catch (err) {
       console.error('Failed to set config', key, err);
-      errorToast(i18n.t('Unable to save your preferences. Try to disable any anti-virus'));
+      void errorToast(i18n.t('Unable to save your preferences. Try to disable any anti-virus'));
     }
   }
 

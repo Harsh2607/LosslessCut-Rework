@@ -25,7 +25,7 @@ export default ({ filePath, zoomedDuration, zoomWindowStartTime, showThumbnails 
     const abortController = new AbortController();
     const thumbnails2: Thumbnail[] = [];
 
-    (async () => {
+    void (async () => {
       if (!isDurationValid(debounced.zoomedDuration) || !debounced.showThumbnails) return;
 
       try {

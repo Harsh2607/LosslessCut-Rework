@@ -40,6 +40,8 @@ $swal2-progress-step-background: var(--gray-5);
 // COMMON VARIABLES FOR CONFIRM AND CANCEL BUTTONS
 $swal2-button-focus-box-shadow: 0 0 0 1px $swal2-background, 0 0 0 3px $swal2-outline-color;
 
+@import 'sweetalert2/src/sweetalert2.scss';
+
 .swal2-textarea::placeholder {
   color: var(--gray-8);
 }
@@ -56,4 +58,3 @@ $swal2-button-focus-box-shadow: 0 0 0 1px $swal2-background, 0 0 0 3px $swal2-ou
   pointer-events: auto;
 }
 
-@import 'sweetalert2/src/sweetalert2.scss';

@@ -12,7 +12,7 @@ const { i18n: { commonI18nOptions, loadPath, addPath } } = remote.require('./ind
 
 // https://github.com/i18next/react-i18next/blob/master/example/react/src/i18n.js
 // https://github.com/i18next/i18next/issues/869
-i18n
+void i18n
   .use(Backend)
   .use({ type: 'languageDetector', async: false, detect: () => app.getLocale() })
   .use(initReactI18next)

@@ -85,7 +85,7 @@ export async function readFrames({ filePath, from, to, streamIndex }: {
   const packetsFiltered: Frame[] = (JSON.parse(new TextDecoder().decode(stdout)).packets as { flags: string, pts_time: string }[])
     .map((p) => ({
       keyframe: p.flags[0] === 'K',
-      time: parseFloat(p.pts_time),
+      time: Number.parseFloat(p.pts_time),
       createdAt,
     }))
     .filter((p) => !Number.isNaN(p.time));
@@ -203,8 +203,8 @@ export function findNearestKeyFrameTime({ frames, time, direction }: { frames: F
 export function tryMapChaptersToEdl(chapters: FFprobeChapter[]) {
   try {
     return chapters.flatMap((chapter) => {
-      const start = parseFloat(chapter.start_time);
-      const end = parseFloat(chapter.end_time);
+      const start = Number.parseFloat(chapter.start_time);
+      const end = Number.parseFloat(chapter.end_time);
       if (Number.isNaN(start) || Number.isNaN(end)) return [];
 
       const name = chapter.tags && typeof chapter.tags.title === 'string' ? chapter.tags.title : undefined;
@@ -478,8 +478,8 @@ export function isProblematicAvc1(outFormat: string | undefined, streams: FFprob
 function parseFfprobeFps(stream: FFprobeStream) {
   const match = typeof stream.avg_frame_rate === 'string' && stream.avg_frame_rate.match(/^(\d+)\/(\d+)$/);
   if (!match) return undefined;
-  const num = parseInt(match[1]!, 10);
-  const den = parseInt(match[2]!, 10);
+  const num = Number.parseInt(match[1]!, 10);
+  const den = Number.parseInt(match[2]!, 10);
   if (den > 0) return num / den;
   return undefined;
 }
@@ -492,7 +492,7 @@ export function getStreamFps(stream: FFprobeStream) {
   if (stream.codec_type === 'audio') {
     // eslint-disable-next-line unicorn/no-lonely-if
     if (typeof stream.sample_rate === 'string') {
-      const sampleRate = parseInt(stream.sample_rate, 10);
+      const sampleRate = Number.parseInt(stream.sample_rate, 10);
       if (!Number.isNaN(sampleRate) && sampleRate > 0) {
         if (stream.codec_name === 'mp3') {
           // https://github.com/mifi/lossless-cut/issues/1754#issuecomment-1774107468
@@ -513,7 +513,7 @@ export function getStreamFps(stream: FFprobeStream) {
 
 function parseTimecode(str: string, frameRate?: number | undefined) {
   // console.log(str, frameRate);
-  const t = Timecode(str, frameRate ? parseFloat(frameRate.toFixed(3)) as FRAMERATE : undefined);
+  const t = Timecode(str, frameRate ? Number.parseFloat(frameRate.toFixed(3)) as FRAMERATE : undefined);
   if (!t) return undefined;
   const seconds = ((t.hours * 60) + t.minutes) * 60 + t.seconds + (t.frames / t.frameRate);
   return Number.isFinite(seconds) ? seconds : undefined;
@@ -585,8 +585,8 @@ export async function createChaptersFromSegments({ paths, defaultChapterNames, u
         // if the file has chapters, use it (but only when not cutting)
         if (useFileChapters && meta.chapters.length > 0) {
           return meta.chapters.map((ch) => {
-            const start = parseFloat(ch.start_time);
-            const end = parseFloat(ch.end_time);
+            const start = Number.parseFloat(ch.start_time);
+            const end = Number.parseFloat(ch.end_time);
             invariant(!Number.isNaN(start) && !Number.isNaN(end));
             return {
               start: timeAt + start,

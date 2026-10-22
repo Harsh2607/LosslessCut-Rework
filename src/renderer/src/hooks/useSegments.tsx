@@ -414,7 +414,7 @@ function useSegments({ filePath, workingRef, setWorking, setProgress, videoStrea
     const inverseSegmentsAndMarkers = invertSegments(sortedSegments, true, true, fileDuration);
 
     if (inverseSegmentsAndMarkers.length === 0) {
-      errorToast(i18n.t('Make sure you have no overlapping segments.'));
+      void errorToast(i18n.t('Make sure you have no overlapping segments.'));
       return;
     }
     // preserve segColorIndex (which represent colors) when inverting
@@ -429,7 +429,7 @@ function useSegments({ filePath, workingRef, setWorking, setProgress, videoStrea
     const inverseSegmentsAndMarkers = invertSegments(sortedSegments, true, true, fileDuration);
 
     if (inverseSegmentsAndMarkers.length === 0) {
-      errorToast(i18n.t('Make sure you have no overlapping segments.'));
+      void errorToast(i18n.t('Make sure you have no overlapping segments.'));
       return;
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -689,7 +689,7 @@ function useSegments({ filePath, workingRef, setWorking, setProgress, videoStrea
     const firstSegmentAtCursorIndex = segmentsAtCursorIndexes[0];
 
     if (firstSegmentAtCursorIndex == null) {
-      errorToast(i18n.t('No segment to split. Please move cursor over the segment you want to split'));
+      void errorToast(i18n.t('No segment to split. Please move cursor over the segment you want to split'));
       return;
     }
 

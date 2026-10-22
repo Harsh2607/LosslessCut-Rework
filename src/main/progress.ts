@@ -31,10 +31,10 @@ export function parseFfmpegProgressLine({ line, customMatcher, duration: duratio
     return undefined;
   }
 
-  const h = parseInt(match2[2]!, 10);
-  const m = parseInt(match2[3]!, 10);
-  const s = parseInt(match2[4]!, 10);
-  const cs = parseInt(match2[5]!, 10);
+  const h = Number.parseInt(match2[2]!, 10);
+  const m = Number.parseInt(match2[3]!, 10);
+  const s = Number.parseInt(match2[4]!, 10);
+  const cs = Number.parseInt(match2[5]!, 10);
   const time = (((h * 60) + m) * 60 + s) + cs / 100;
   // console.log(time);
 

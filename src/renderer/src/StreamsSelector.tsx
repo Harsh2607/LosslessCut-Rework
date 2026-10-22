@@ -148,7 +148,7 @@ function AspectEditor({ stream, streamParams, updateStreamParams }: {
   const currentAr = streamParams?.aspectRatio ?? { num: 0, den: 0 };
 
   const updateAr = (field: 'num' | 'den', value: string) => {
-    const parsed = parseInt(value, 10);
+    const parsed = Number.parseInt(value, 10);
     const val = Number.isNaN(parsed) || parsed < 0 ? 0 : parsed;
     updateStreamParams((params) => {
       // eslint-disable-next-line no-param-reassign
@@ -181,7 +181,7 @@ function CropEditor({ stream, streamParams, updateStreamParams }: {
   const currentCrop = streamParams?.crop ?? { left: 0, right: 0, top: 0, bottom: 0 };
 
   const updateCrop = (field: 'left' | 'right' | 'top' | 'bottom', value: string) => {
-    const parsed = parseInt(value, 10);
+    const parsed = Number.parseInt(value, 10);
     const val = Number.isNaN(parsed) || parsed < 0 ? 0 : parsed;
     updateStreamParams((params) => {
       // eslint-disable-next-line no-param-reassign
@@ -535,8 +535,8 @@ const Stream = memo(({ filePath, stream, onToggle, toggleCopyStreamIds, copyStre
   const streamParams = getStreamParams({ paramsByFile, filePath, streamId: stream.index });
   const effectiveLanguage = streamParams?.metadata['language'] ?? stream.tags?.language;
 
-  const bitrate = parseInt(stream.bit_rate!, 10);
-  const streamDuration = parseInt(stream.duration, 10);
+  const bitrate = Number.parseInt(stream.bit_rate!, 10);
+  const streamDuration = Number.parseInt(stream.duration, 10);
   const duration = !Number.isNaN(streamDuration) ? streamDuration : fileDuration;
 
   let Icon: typeof FaBan;
@@ -796,7 +796,7 @@ function StreamsSelector({
 
   function getFormatDuration(format: FFprobeFormat | undefined) {
     if (!format || !format.duration) return undefined;
-    const parsed = parseFloat(format.duration);
+    const parsed = Number.parseFloat(format.duration);
     if (Number.isNaN(parsed)) return undefined;
     return parsed;
   }

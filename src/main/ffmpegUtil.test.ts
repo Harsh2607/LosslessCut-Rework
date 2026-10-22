@@ -35,6 +35,7 @@ describe('parseBlackDetectLine', () => {
   test('other lines', () => {
     expect(parseBlackDetectLine('[Parsed_blackdetect_0 @ 0x5581e0c2e540] something else')).toBeUndefined();
     expect(parseBlackDetectLine('frame=  100 fps=0.0 q=-0.0 size=N/A time=00:00:04.00')).toBeUndefined();
+    expect(parseBlackDetectLine('[Parsed_blackdetect_0 @ 0x5581e0c2e540] black_start:5 black_end:2 black_duration:0')).toBeUndefined();
   });
 });
 
@@ -47,6 +48,9 @@ describe('parseSilenceDetectLine', () => {
   });
   test('slightly negative start is clamped to 0', () => {
     expect(parseSilenceDetectLine('[Parsed_silencedetect_1 @ 0x5581e0c2e540] silence_end: 1.522268 | silence_duration: 1.522426')).toEqual({ start: 0, end: 1.522268 });
+  });
+  test('invalid interval', () => {
+    expect(parseSilenceDetectLine('[Parsed_silencedetect_1 @ 0x5581e0c2e540] silence_end: 0 | silence_duration: 0')).toBeUndefined();
   });
   test('silence_start line is ignored', () => {
     expect(parseSilenceDetectLine('[Parsed_silencedetect_0 @ 0x5581e0c2e540] silence_start: 7.5')).toBeUndefined();

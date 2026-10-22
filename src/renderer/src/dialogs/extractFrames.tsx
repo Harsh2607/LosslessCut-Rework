@@ -36,7 +36,7 @@ export async function askExtractFramesAsImages({ segmentsNumFrames, plural, fps 
       showCancelButton: true,
     });
     if (value == null) return undefined;
-    const intervalFrames = Math.round(parseFloat(value) * fps);
+    const intervalFrames = Math.round(Number.parseFloat(value) * fps);
     if (Number.isNaN(intervalFrames) || intervalFrames < 1 || intervalFrames > 1000) return undefined; // a too large value uses a lot of memory
 
     filter = `thumbnail=${intervalFrames}`;
@@ -55,7 +55,7 @@ export async function askExtractFramesAsImages({ segmentsNumFrames, plural, fps 
         showCancelButton: true,
       });
       if (value == null) return undefined;
-      const intervalFrames = parseInt(value, 10);
+      const intervalFrames = Number.parseInt(value, 10);
       if (Number.isNaN(intervalFrames) || intervalFrames < 1) return undefined;
       nthFrame = intervalFrames;
     } else {
@@ -68,7 +68,7 @@ export async function askExtractFramesAsImages({ segmentsNumFrames, plural, fps 
         showCancelButton: true,
       });
       if (value == null) return undefined;
-      const intervalFrames = Math.round(parseFloat(value) * fps);
+      const intervalFrames = Math.round(Number.parseFloat(value) * fps);
       if (Number.isNaN(intervalFrames) || intervalFrames < 1) return undefined;
       nthFrame = intervalFrames;
     }
@@ -86,7 +86,7 @@ export async function askExtractFramesAsImages({ segmentsNumFrames, plural, fps 
       showCancelButton: true,
     });
     if (value == null) return undefined;
-    const minSceneChange = parseFloat(value);
+    const minSceneChange = Number.parseFloat(value);
     if (Number.isNaN(minSceneChange) || minSceneChange <= 0 || minSceneChange >= 1) return undefined;
 
     filter = `select=gt(scene\\,${minSceneChange})`;

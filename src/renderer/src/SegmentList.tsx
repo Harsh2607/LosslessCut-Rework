@@ -6,7 +6,7 @@ import { motion } from 'motion/react';
 import { useTranslation, Trans } from 'react-i18next';
 import type { DragEndEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { CSS } from '@dnd-kit/utilities';
@@ -20,6 +20,7 @@ import { saveColor, controlsBackground, primaryTextColor, darkModeTransition } f
 import { useSegColors } from './contexts';
 import { getSegmentTags } from './segments';
 import TagEditor, { cancelTagEditOnEscape } from './components/TagEditor';
+import { reorderSortableItems } from './util';
 import type { ContextMenuTemplate, DefiniteSegmentBase, FormatTimecode, GetFrameCount, InverseCutSegment, SegmentBase, SegmentColorIndex, SegmentTags, StateSegment } from './types';
 import type { UseSegments } from './hooks/useSegments';
 import * as Dialog from './components/Dialog';
@@ -254,6 +255,7 @@ const Segment = memo(({
     <div
       ref={setRef}
       role="button"
+      tabIndex={0}
       onClick={handleSegmentClick}
       onDoubleClick={onDoubleClick}
       style={style}
@@ -433,13 +435,13 @@ function SegmentList({
       inputValue: index + 1,
       showCancelButton: true,
       inputValidator: (v) => {
-        const parsed = parseInt(v, 10);
+        const parsed = Number.parseInt(v, 10);
         return Number.isNaN(parsed) || parsed > cutSegments.length || parsed < 1 ? t('Invalid number entered') : undefined;
       },
     });
 
     if (value) {
-      const newOrder = parseInt(value, 10);
+      const newOrder = Number.parseInt(value, 10);
       updateSegOrder(index, newOrder - 1);
     }
   }, [cutSegments.length, t, updateSegOrder]);
@@ -567,11 +569,8 @@ function SegmentList({
   const handleDragEnd = (event: DragEndEvent) => {
     setDraggingId(undefined);
     const { active, over } = event;
-    if (over != null && active.id !== over?.id) {
-      const ids = sortableList.map((s) => s.id);
-      const oldIndex = ids.indexOf(active.id as string);
-      const newIndex = ids.indexOf(over.id as string);
-      const newList = arrayMove(sortableList, oldIndex, newIndex);
+    if (over != null && active.id !== over.id) {
+      const newList = reorderSortableItems(sortableList, active.id, over.id);
       updateSegOrders(newList.map((item) => item.id));
     }
   };

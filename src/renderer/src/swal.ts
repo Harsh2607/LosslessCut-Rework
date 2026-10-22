@@ -65,9 +65,13 @@ export default function getSwal() {
   };
 }
 
-export const errorToast = (text: string) => toast.fire({
-  icon: 'error',
-  text,
-});
+export const errorToast = (text: string) => {
+  void toast.fire({
+    icon: 'error',
+    text,
+  });
+};
 
-export const showPlaybackFailedMessage = () => errorToast(i18n.t('Unable to playback this file. Try to convert to supported format from the menu'));
+export const showPlaybackFailedMessage = () => {
+  errorToast(i18n.t('Unable to playback this file. Try to convert to supported format from the menu'));
+};

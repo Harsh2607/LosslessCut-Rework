@@ -57,11 +57,11 @@ export default ({ autoSaveProjectFile, storeProjectInWorkingDir, filePath, custo
         await saveLlcProject({ savePath: debouncedSaveOperation.projectFileSavePath, mediaFilePath: debouncedSaveOperation.filePath, cutSegments: debouncedSaveOperation.cutSegments });
         lastSaveOperation.current = debouncedSaveOperation;
       } catch (err) {
-        errorToast(i18n.t('Unable to save project file'));
+        void errorToast(i18n.t('Unable to save project file'));
         console.error('Failed to save project file', err);
       }
     }
-    save();
+    void save();
   }, [debouncedSaveOperation, autoSaveProjectFile]);
 
   return {

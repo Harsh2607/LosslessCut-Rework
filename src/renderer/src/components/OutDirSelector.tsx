@@ -16,7 +16,7 @@ export default function OutDirSelector({ children }: { children: React.ReactNode
 
   const handleChange = useCallback<React.ChangeEventHandler<HTMLSelectElement>>(async (e) => {
     if (e.target.value === changeMagicValue) {
-      changeOutDir();
+      await changeOutDir();
     } else {
       const newOutDir = e.target.value === '' ? undefined : e.target.value;
       try {

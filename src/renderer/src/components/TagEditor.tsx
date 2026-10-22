@@ -85,7 +85,7 @@ function TagEditor({ existingTags = emptyObject, customTags = emptyObject, editi
       const newTags = segmentTagsSchema.parse(json);
       onTagsChange(newTags);
     } catch (e) {
-      if (e instanceof Error) errorToast(e.message);
+      if (e instanceof Error) void errorToast(e.message);
     }
   }, [onTagsChange]);
 

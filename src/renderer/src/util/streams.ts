@@ -496,7 +496,7 @@ export function isAudioDefinitelyNotSupported(streams: FFprobeStream[]) {
 export function getVideoTimebase(videoStream: Pick<FFprobeStream, 'time_base'>) {
   const timebaseMatch = videoStream.time_base && videoStream.time_base.split('/');
   if (timebaseMatch) {
-    const timebaseParsed = parseInt(timebaseMatch[1]!, 10);
+    const timebaseParsed = Number.parseInt(timebaseMatch[1]!, 10);
     if (!Number.isNaN(timebaseParsed)) return timebaseParsed;
   }
   return undefined;

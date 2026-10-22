@@ -228,7 +228,7 @@ async function startPlayback({ path, slaveVideo, masterVideo, videoStreamIndex, 
     }
 
     // make sure we always process the next chunk
-    processChunk();
+    void processChunk();
   });
 
   interval = setInterval(() => {
@@ -304,7 +304,7 @@ async function startPlayback({ path, slaveVideo, masterVideo, videoStreamIndex, 
   }, 30); // todo requestAnimationFrame?
 
   // OK, everything initialized and ready to stream!
-  processChunk();
+  void processChunk();
 }
 
 function MediaSourcePlayer({ rotate, filePath, videoStream, audioStreams, masterVideoRef, mediaSourceQuality, ffmpegHwaccel, baseVideoStyle }: {
@@ -393,7 +393,13 @@ function MediaSourcePlayer({ rotate, filePath, videoStream, audioStreams, master
       }
     };
 
-    startDebounced = debounce(start, 500, { leading: true, trailing: true });
+    const runStart = () => {
+      start().catch((err) => {
+        console.error('Preview failed', err);
+      });
+    };
+
+    startDebounced = debounce(runStart, 500, { leading: true, trailing: true });
 
     startDebounced();
 

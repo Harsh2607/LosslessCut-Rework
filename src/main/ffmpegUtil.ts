@@ -25,13 +25,13 @@ const silenceDetectRegex = new RegExp(`${filterLogPrefix('silencedetect')} silen
 export function parseBlackDetectLine(line: string) {
   const match = line.match(blackDetectRegex);
   if (!match) return undefined;
-  return toInterval(parseFloat(match[1]!), parseFloat(match[2]!));
+  return toInterval(Number.parseFloat(match[1]!), Number.parseFloat(match[2]!));
 }
 
 export function parseSilenceDetectLine(line: string) {
   const match = line.match(silenceDetectRegex);
   if (!match) return undefined;
-  const end = parseFloat(match[1]!);
+  const end = Number.parseFloat(match[1]!);
   // start can be slightly negative if the audio timestamps start below 0
-  return toInterval(Math.max(0, end - parseFloat(match[2]!)), end);
+  return toInterval(Math.max(0, end - Number.parseFloat(match[2]!)), end);
 }

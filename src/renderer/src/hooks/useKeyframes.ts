@@ -50,7 +50,7 @@ function useKeyframes({ keyframesEnabled, filePath, commandedTime, videoStream, 
   useDebounceOld(() => {
     let aborted = false;
 
-    (async () => {
+    void (async () => {
       // See getIntervalAroundTime
       // We still want to calculate keyframes even if not shouldShowKeyframes because maybe we want to be able to step to the closest keyframe
       const shouldRun = keyframesEnabled && filePath != null && videoStream && commandedTime != null && !readingKeyframesPromise.current;

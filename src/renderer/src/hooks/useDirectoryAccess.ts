@@ -41,7 +41,7 @@ export default function useDirectoryAccess({ setCustomOutDir }: { setCustomOutDi
       // If we are not MAS, but we don't have access, then we can't do anything
       if (!masMode) {
         // so just fail right away
-        errorToast(i18n.t('You have no write access to the directory of this file'));
+        void errorToast(i18n.t('You have no write access to the directory of this file'));
         throw new DirectoryAccessDeclinedError();
       }
 
@@ -87,7 +87,7 @@ export default function useDirectoryAccess({ setCustomOutDir }: { setCustomOutDi
         setCustomOutDir(newOutDir);
         newCustomOutDir = newOutDir;
       } else {
-        errorToast(i18n.t('You have no write access to the directory of this file, please select a custom working dir'));
+        void errorToast(i18n.t('You have no write access to the directory of this file, please select a custom working dir'));
         setCustomOutDir(undefined);
         throw new DirectoryAccessDeclinedError();
       }

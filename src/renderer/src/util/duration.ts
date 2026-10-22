@@ -61,8 +61,8 @@ export function parseDuration(str: string, fps?: number) {
   if (!match) return undefined;
 
   const [, sign, hourStr, minStr, secStrRaw] = match;
-  const hour = hourStr != null ? parseInt(hourStr, 10) : 0;
-  const min = minStr != null ? parseInt(minStr, 10) : 0;
+  const hour = hourStr != null ? Number.parseInt(hourStr, 10) : 0;
+  const min = minStr != null ? Number.parseInt(minStr, 10) : 0;
 
   const secWithFraction = secStrRaw!.replace(',', '.');
 
@@ -70,11 +70,11 @@ export function parseDuration(str: string, fps?: number) {
 
   let time: number;
   if (fps == null) {
-    time = ((hour * 60) + min) * 60 + parseFloat(secWithFraction);
+    time = ((hour * 60) + min) * 60 + Number.parseFloat(secWithFraction);
   } else {
     const [secStr, framesStr] = secWithFraction.split('.');
-    const wholeSeconds = ((hour * 60) + min) * 60 + parseInt(secStr!, 10);
-    const frames = framesStr != null ? parseInt(framesStr, 10) : 0;
+    const wholeSeconds = ((hour * 60) + min) * 60 + Number.parseInt(secStr!, 10);
+    const frames = framesStr != null ? Number.parseInt(framesStr, 10) : 0;
     // inverse of formatDuration (which floors the frame remainder), needed for non-integer fps like 29.97
     time = Math.max(0, Math.ceil(wholeSeconds * fps + frames - 1e-6)) / fps;
   }

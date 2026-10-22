@@ -71,11 +71,17 @@ it('should detect complete timecodes for the active format', () => {
     ({ seconds }) => formatDuration({ seconds, fps: fractionalFps }),
   )).toBe(true);
 
-  expect(isExactTimecodeMatch('1.500', parseFloat, ({ seconds }) => seconds.toFixed(3))).toBe(true);
-  expect(isExactTimecodeMatch('1.50', parseFloat, ({ seconds }) => seconds.toFixed(3))).toBe(false);
+  expect(isExactTimecodeMatch('1.500', Number.parseFloat, ({ seconds }) => seconds.toFixed(3))).toBe(true);
+  expect(isExactTimecodeMatch('1.50', Number.parseFloat, ({ seconds }) => seconds.toFixed(3))).toBe(false);
 
-  expect(isExactTimecodeMatch('45', (value) => parseInt(value, 10), ({ seconds }) => String(seconds))).toBe(true);
-  expect(isExactTimecodeMatch('invalid', parseFloat, ({ seconds }) => seconds.toFixed(3))).toBe(false);
+  expect(isExactTimecodeMatch('45', (value) => Number.parseInt(value, 10), ({ seconds }) => String(seconds))).toBe(true);
+  expect(isExactTimecodeMatch('invalid', Number.parseFloat, ({ seconds }) => seconds.toFixed(3))).toBe(false);
+});
+
+it('returns undefined for invalid duration strings', () => {
+  expect(parseDuration('not-a-duration')).toBeUndefined();
+  expect(parseDuration('00:60:00')).toBeUndefined();
+  expect(parseDuration('00:75:00')).toBeUndefined();
 });
 
 // https://github.com/mifi/lossless-cut/issues/1603

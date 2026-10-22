@@ -54,7 +54,7 @@ const InvertCutModeButton = memo(({ invertCutSegments, setInvertCutSegments }: {
   const onYinYangClick = useCallback(() => {
     setInvertCutSegments((v) => {
       const newVal = !v;
-      getSwal().toast.fire({
+      void getSwal().toast.fire({
         title: newVal
           ? t('When you export, selected segments on the timeline will be REMOVED - the surrounding areas will be KEPT')
           : t('When you export, selected segments on the timeline will be KEPT - the surrounding areas will be REMOVED.'),
@@ -204,7 +204,7 @@ const CutTimeInput = memo(({ disabled, darkMode, cutTime, setCutTime, startTimeO
           }
         } catch (err) {
           console.warn('Cannot set cut time on blur', err);
-          if (err instanceof UserFacingError) errorToast(err.message);
+          if (err instanceof UserFacingError) void errorToast(err.message);
           setError(true);
           return;
         }
@@ -404,7 +404,7 @@ function BottomBar({
   const rotationStr = `${rotation}°`;
 
   useEffect(() => {
-    checkAppPath();
+    void checkAppPath();
   }, []);
 
   const handleChangePlaybackRateClick = useCallback(async () => {
@@ -432,6 +432,7 @@ function BottomBar({
       <div
         style={segButtonStyle}
         role="button"
+        tabIndex={0}
         title={`${direction > 0 ? t('Select next segment') : t('Select previous segment')} (${newIndex + 1})`}
         onClick={() => seg && setCurrentSegIndex(newIndex)}
       >
@@ -509,6 +510,7 @@ function BottomBar({
             <div
               className="transport-dock-btn"
               role="button"
+              tabIndex={0}
               title={actionTitle(t('Seek previous keyframe'), 'seekBackwardsKeyframe')}
               onClick={() => seekClosestKeyframe(-1)}
             >
@@ -523,6 +525,7 @@ function BottomBar({
             <div
               className="transport-dock-btn"
               role="button"
+              tabIndex={0}
               title={actionTitle(t('One frame back'), 'seekPreviousFrame')}
               onClick={() => shortStep(-1)}
             >
@@ -533,6 +536,7 @@ function BottomBar({
           <div
             title={actionTitle(t('Play/pause'), 'togglePlayResetSpeed')}
             role="button"
+            tabIndex={0}
             onClick={() => togglePlay()}
             style={{ ...playStyle, margin: '0 2px', background: primaryColor }}
           >
@@ -543,6 +547,7 @@ function BottomBar({
             <div
               className="transport-dock-btn"
               role="button"
+              tabIndex={0}
               title={actionTitle(t('One frame forward'), 'seekNextFrame')}
               onClick={() => shortStep(1)}
             >
@@ -554,6 +559,7 @@ function BottomBar({
             <div
               className="transport-dock-btn"
               role="button"
+              tabIndex={0}
               title={actionTitle(t('Seek next keyframe'), 'seekForwardsKeyframe')}
               onClick={() => seekClosestKeyframe(1)}
             >
@@ -597,15 +603,15 @@ function BottomBar({
           <SimpleModeButton />
 
           {simpleMode && (
-            <div role="button" onClick={toggleSimpleMode} style={{ fontSize: '.8em', marginLeft: '.2em' }}>{t('Toggle advanced view')}</div>
+            <div role="button" tabIndex={0} onClick={toggleSimpleMode} style={{ fontSize: '.8em', marginLeft: '.2em' }}>{t('Toggle advanced view')}</div>
           )}
         </div>
 
         {isFileOpened && !simpleMode && (
           <>
-            <div role="button" title={t('Zoom')} onClick={timelineToggleComfortZoom}>{Math.floor(zoom)}x</div>
+            <div role="button" tabIndex={0} title={t('Zoom')} onClick={timelineToggleComfortZoom}>{Math.floor(zoom)}x</div>
 
-            <Select style={{ width: '4.5em' }} value={zoomOptions.includes(zoom) ? zoom.toString() : ''} title={t('Zoom')} onChange={withBlur((e) => setZoom(() => parseInt(e.target.value, 10)))}>
+            <Select style={{ width: '4.5em' }} value={zoomOptions.includes(zoom) ? zoom.toString() : ''} title={t('Zoom')} onChange={withBlur((e) => setZoom(() => Number.parseInt(e.target.value, 10)))}>
               <option key="" value="" disabled>{t('Zoom')}</option>
               {zoomOptions.map((val) => (
                 <option key={val} value={String(val)}>{t('Zoom')} {val}x</option>
@@ -615,17 +621,17 @@ function BottomBar({
             <div ref={playbackRateRef} title={t('Playback rate')} style={{ color: 'var(--gray-11)', fontSize: '.7em', borderRadius: '.5em' }}>{playbackRate.toFixed(1)}</div>
 
             <div style={{ whiteSpace: 'nowrap' }}>
-              <IoMdSpeedometer title={t('Change FPS')} style={{ fontSize: '1.3em', verticalAlign: 'middle' }} role="button" onClick={handleChangePlaybackRateClick} />
+              <IoMdSpeedometer title={t('Change FPS')} style={{ fontSize: '1.3em', verticalAlign: 'middle' }} role="button" tabIndex={0} onClick={handleChangePlaybackRateClick} />
 
               {detectedFps != null && (
-                <span title={t('Video FPS')} role="button" onClick={handleChangePlaybackRateClick} style={{ color: 'var(--gray-11)', fontSize: '.7em', marginLeft: '.3em' }}>{(detectedFps * outputPlaybackRate).toFixed(3)}</span>
+                <span title={t('Video FPS')} role="button" tabIndex={0} onClick={handleChangePlaybackRateClick} style={{ color: 'var(--gray-11)', fontSize: '.7em', marginLeft: '.3em' }}>{(detectedFps * outputPlaybackRate).toFixed(3)}</span>
               )}
             </div>
           </>
         )}
 
         {isFileOpened && !simpleMode && hasVideo && (
-          <div onClick={increaseRotation} role="button" style={{ whiteSpace: 'nowrap' }}>
+          <div onClick={increaseRotation} role="button" tabIndex={0} style={{ whiteSpace: 'nowrap' }}>
             <MdRotate90DegreesCcw
               style={{ fontSize: '1.3em', verticalAlign: 'middle', color: isRotationSet ? primaryTextColor : undefined }}
               title={actionTitle(`${t('Set output rotation. Current: ')} ${isRotationSet ? rotationStr : t('Don\'t modify')}`, 'increaseRotation')}
@@ -652,6 +658,7 @@ function BottomBar({
             style={{ fontSize: '1em', color: dangerColor }}
             onClick={cleanupFilesDialog}
             role="button"
+            tabIndex={0}
           />
         )}
 
@@ -659,6 +666,7 @@ function BottomBar({
           <div style={{ whiteSpace: 'nowrap' }}>
             <IoIosCamera
               role="button"
+              tabIndex={0}
               style={{ fontSize: '1.9em', verticalAlign: 'middle' }}
               title={actionTitle(t('Capture frame'), 'captureSnapshot')}
               onClick={captureSnapshot}
@@ -669,7 +677,7 @@ function BottomBar({
         )}
 
         {isFileOpened && (
-          <div role="button" onClick={toggleLoopSelectedSegments} title={actionTitle(t('Play selected segments in order'), 'toggleLoopSelectedSegments')} style={loopSelectedSegmentsButtonStyle}>
+          <div role="button" tabIndex={0} onClick={toggleLoopSelectedSegments} title={actionTitle(t('Play selected segments in order'), 'toggleLoopSelectedSegments')} style={loopSelectedSegmentsButtonStyle}>
             <PlayPauseMode />
           </div>
         )}

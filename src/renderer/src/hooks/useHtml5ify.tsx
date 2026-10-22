@@ -207,7 +207,7 @@ export default function useHtml5ify({ filePath, hasVideo, hasAudio, workingRef, 
           setTotalProgress();
         }
 
-        if (failedFiles.length > 0) getSwal().toast.fire({ title: `${i18n.t('Failed to convert files:')} ${failedFiles.join(' ')}`, timer: undefined, showConfirmButton: true });
+        if (failedFiles.length > 0) void getSwal().toast.fire({ title: `${i18n.t('Failed to convert files:')} ${failedFiles.join(' ')}`, timer: undefined, showConfirmButton: true });
       }, i18n.t('Failed to batch convert to supported format'));
     } finally {
       setWorking(undefined);

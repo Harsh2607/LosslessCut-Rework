@@ -141,6 +141,45 @@ function emitEvent(appEvent: AppEvent) {
   ipcRenderer.send('appEvent', appEvent satisfies AppEvent);
 }
 
+function handleCommonExportErrors(err: unknown): boolean {
+  if (isExecaError(err)) {
+    console.log('stdout:', getStdioString(err.stdout));
+    console.error('stderr:', getStdioString(err.stderr));
+
+    if (isOutOfSpaceError(err)) {
+      void showDiskFull();
+      return true;
+    }
+    if (isMuxNotSupported(err)) {
+      void showMuxNotSupported();
+      return true;
+    }
+  }
+
+  if (err instanceof OutputNotWritableError) {
+    void showOutputNotWritable();
+    return true;
+  }
+
+  if (err instanceof UserFacingError) {
+    errorToast(err.message);
+    return true;
+  }
+
+  return false;
+}
+
+function handleExtractStreamsError(err: unknown, defaultMessage: string) {
+  if (err instanceof RefuseOverwriteError) {
+    void showRefuseToOverwrite();
+  } else if (err instanceof UserFacingError) {
+    errorToast(err.message);
+  } else {
+    errorToast(defaultMessage);
+    console.error(defaultMessage, err);
+  }
+}
+
 function App() {
   const { t } = useTranslation();
 
@@ -221,7 +260,7 @@ function App() {
   useEffect(() => setDocumentTitle({ filePath, working: working?.text, progress }), [progress, filePath, working?.text]);
 
   useEffect(() => {
-    mainApi.setProgressBar(progress ?? -1);
+    void mainApi.setProgressBar(progress ?? -1);
   }, [progress]);
 
   useEffect(() => {
@@ -267,15 +306,15 @@ function App() {
 
   const showNotification = useCallback((opts: SweetAlertOptions) => {
     if (!hideAllNotifications) {
-      getSwal().toast.fire(opts);
+      void getSwal().toast.fire(opts);
     }
   }, [hideAllNotifications]);
 
   const showOsNotification = useCallback((text: string) => {
     if (hideOsNotifications == null) {
       // on Linux app name is not shown in notification, see https://github.com/mifi/lossless-cut/issues/2794
-      if (isLinux) mainApi.sendOsNotification({ title: appName, body: text });
-      else mainApi.sendOsNotification({ title: text });
+      if (isLinux) void mainApi.sendOsNotification({ title: appName, body: text });
+      else void mainApi.sendOsNotification({ title: text });
     }
   }, [hideOsNotifications]);
 
@@ -333,7 +372,7 @@ function App() {
 
   // 360 means we don't modify rotation gtrgt
   const isRotationSet = rotation !== 360;
-  const effectiveRotation = useMemo(() => (isRotationSet ? rotation : (activeVideoStream?.tags?.rotate ? parseInt(activeVideoStream.tags.rotate, 10) : undefined)), [isRotationSet, activeVideoStream, rotation]);
+  const effectiveRotation = useMemo(() => (isRotationSet ? rotation : (activeVideoStream?.tags?.rotate ? Number.parseInt(activeVideoStream.tags.rotate, 10) : undefined)), [isRotationSet, activeVideoStream, rotation]);
 
   const zoomAbs = useCallback((fn: (v: number) => number) => setZoom((z) => Math.min(Math.max(fn(z), 1), zoomMax)), []);
   const zoomRel = useCallback((rel: number) => zoomAbs((z) => z + (rel * (1 + (z / 10)))), [zoomAbs]);
@@ -353,7 +392,7 @@ function App() {
 
   const checkFileOpened = useCallback(() => {
     if (isFileOpened) return true;
-    getSwal().toast.fire({ icon: 'info', title: i18n.t('You need to open a media file first') });
+    void getSwal().toast.fire({ icon: 'info', title: i18n.t('You need to open a media file first') });
     return false;
   }, [isFileOpened]);
 
@@ -880,12 +919,12 @@ function App() {
 
   const handleExportFailed = useCallback(async (err: unknown) => {
     const sendErrorReport = await showExportFailedDialog({ fileFormat, safeOutputFileName });
-    if (sendErrorReport) openSendReportDialogWithState(err);
+    if (sendErrorReport) void openSendReportDialogWithState(err);
   }, [fileFormat, safeOutputFileName, openSendReportDialogWithState]);
 
   const handleConcatFailed = useCallback(async (err: unknown, reportState: object) => {
     const sendErrorReport = await showConcatFailedDialog({ fileFormat });
-    if (sendErrorReport) openSendConcatReportDialogWithState(err, reportState);
+    if (sendErrorReport) void openSendConcatReportDialogWithState(err, reportState);
   }, [fileFormat, openSendConcatReportDialogWithState]);
 
   const generateCutFileNames = useCallback(async (template: string) => {
@@ -968,45 +1007,23 @@ function App() {
       const sizeCheckResult = checkFileSizes(inputSize, outputSize);
       if (sizeCheckResult != null) warnings.add(sizeCheckResult);
 
-      if (clearBatchFilesAfterConcat) closeBatch();
+      if (clearBatchFilesAfterConcat) void closeBatch();
       if (!includeAllStreams && haveExcludedStreams) notices.add(i18n.t('Some extra tracks have been discarded. You can change this option before merging.'));
       if (!enableOverwriteOutput) warnings.add(i18n.t('Overwrite output setting is disabled and some files might have been skipped.'));
 
       if (!hideAllNotifications) {
         showOsNotification(i18n.t('Merge finished'));
-        openConcatFinishedDialog({ filePath: outPath, notices: [...notices], warnings: [...warnings] });
+        void openConcatFinishedDialog({ filePath: outPath, notices: [...notices], warnings: [...warnings] });
       }
     } catch (err) {
       if (err instanceof DirectoryAccessDeclinedError || isAbortedError(err)) return;
 
       showOsNotification(i18n.t('Failed to merge'));
 
-      if (isExecaError(err)) {
-        console.log('stdout:', getStdioString(err.stdout));
-        console.error('stderr:', getStdioString(err.stderr));
-
-        if (isOutOfSpaceError(err)) {
-          showDiskFull();
-          return;
-        }
-        if (isMuxNotSupported(err)) {
-          showMuxNotSupported();
-          return;
-        }
-      }
-
-      if (err instanceof OutputNotWritableError) {
-        showOutputNotWritable();
-        return;
-      }
-
-      if (err instanceof UserFacingError) {
-        errorToast(err.message);
-        return;
-      }
+      if (handleCommonExportErrors(err)) return;
 
       const reportState = { includeAllStreams, streams, outFormat, clearBatchFilesAfterConcat };
-      handleConcatFailed(err, reportState);
+      void handleConcatFailed(err, reportState);
     } finally {
       setWorking(undefined);
       setProgress(undefined);
@@ -1219,7 +1236,7 @@ function App() {
       invariant(revealPath != null);
       if (!hideAllNotifications) {
         showOsNotification(i18n.t('Export finished'));
-        openCutFinishedDialog({ filePath: revealPath, warnings: [...warnings], notices: [...notices] });
+        void openCutFinishedDialog({ filePath: revealPath, warnings: [...warnings], notices: [...notices] });
       }
 
       setExportCount((c) => c + 1);
@@ -1233,31 +1250,9 @@ function App() {
 
       showOsNotification(i18n.t('Failed to export'));
 
-      if (isExecaError(err)) {
-        console.log('stdout:', getStdioString(err.stdout));
-        console.error('stderr:', getStdioString(err.stderr));
+      if (handleCommonExportErrors(err)) return;
 
-        if (isOutOfSpaceError(err)) {
-          showDiskFull();
-          return;
-        }
-        if (isMuxNotSupported(err)) {
-          showMuxNotSupported();
-          return;
-        }
-      }
-
-      if (err instanceof OutputNotWritableError) {
-        showOutputNotWritable();
-        return;
-      }
-
-      if (err instanceof UserFacingError) {
-        errorToast(err.message);
-        return;
-      }
-
-      handleExportFailed(err);
+      void handleExportFailed(err);
     } finally {
       setWorking(undefined);
       setProgress(undefined);
@@ -1290,7 +1285,7 @@ function App() {
           : await captureFrameFromTag({ customOutDir, filePath, time: currentTime, captureFormat, quality: captureFrameQuality, video });
 
         if (simpleMode && !prefersReducedMotion) shootConfetti();
-        if (!hideAllNotifications) openExportFinishedDialog({ filePath: outPath, children: <div style={{ wordWrap: 'break-word' }}>{i18n.t('Screenshot captured to:')} {outPath}</div> });
+        if (!hideAllNotifications) void openExportFinishedDialog({ filePath: outPath, children: <div style={{ wordWrap: 'break-word' }}>{i18n.t('Screenshot captured to:')} {outPath}</div> });
       }, i18n.t('Failed to capture frame'));
     } finally {
       setWorking(undefined);
@@ -1324,7 +1319,7 @@ function App() {
         await captureFrameToClipboard({ filePath, time: currentTime, quality: captureFrameQuality });
 
         if (simpleMode && !prefersReducedMotion) shootConfetti();
-        if (!hideAllNotifications) getSwal().toast.fire({ icon: 'info', title: t('Screenshot captured clipboard') });
+        if (!hideAllNotifications) void getSwal().toast.fire({ icon: 'info', title: t('Screenshot captured clipboard') });
       }, i18n.t('Failed to capture frame'));
     } finally {
       setWorking(undefined);
@@ -1366,7 +1361,7 @@ function App() {
       }
       if (!hideAllNotifications && lastOutPath != null) {
         showOsNotification(i18n.t('Frames have been extracted'));
-        openExportFinishedDialog({ filePath: lastOutPath, children: <div style={{ wordWrap: 'break-word' }}>{i18n.t('Frames extracted to: {{path}}', { path: outputDir })}</div> });
+        void openExportFinishedDialog({ filePath: lastOutPath, children: <div style={{ wordWrap: 'break-word' }}>{i18n.t('Frames extracted to: {{path}}', { path: outputDir })}</div> });
       }
     } catch (err) {
       showOsNotification(i18n.t('Failed to extract frames'));
@@ -1378,7 +1373,7 @@ function App() {
   }, [filePath, detectedFps, workingRef, getFrameCount, setWorking, hideAllNotifications, captureFramesRange, customOutDir, captureFormat, captureFrameQuality, captureFrameFileNameFormat, showOsNotification, openExportFinishedDialog, outputDir, handleError]);
 
   const extractCurrentSegmentFramesAsImages = useCallback(() => {
-    if (currentCutSeg != null) extractSegmentsFramesAsImages([currentCutSeg]);
+    if (currentCutSeg != null) void extractSegmentsFramesAsImages([currentCutSeg]);
   }, [currentCutSeg, extractSegmentsFramesAsImages]);
 
   const extractSelectedSegmentsFramesAsImages = useCallback(() => extractSegmentsFramesAsImages(selectedSegments), [extractSegmentsFramesAsImages, selectedSegments]);
@@ -1386,7 +1381,7 @@ function App() {
   const userChangePlaybackRate = useCallback((dir: number, rateMultiplier?: number) => {
     const video = videoRef.current;
     if (!playingRef.current) {
-      video!.play();
+      void video!.play();
     } else {
       const newRate = adjustRate(video!.playbackRate, dir, rateMultiplier);
       setPlaybackRate(newRate);
@@ -1484,7 +1479,7 @@ function App() {
         stream.index, shouldCopyStreamByDefault(stream),
       ]));
 
-      const validDuration = isDurationValid(parseFloat(ffprobeMeta.format.duration));
+      const validDuration = isDurationValid(Number.parseFloat(ffprobeMeta.format.duration));
 
       const hevcPlaybackSupported = enableNativeHevc && await hevcPlaybackSupportedPromise;
 
@@ -1554,7 +1549,7 @@ function App() {
       } else if (isAudioDefinitelyNotSupported(ffprobeMeta.streams)) {
         showNotification({ icon: 'info', text: i18n.t('The audio track is not supported while previewing. You can convert to a supported format from the menu') });
       } else if (!validDuration) {
-        getSwal().toast.fire({ icon: 'warning', timer: 10000, text: i18n.t('This file does not have a valid duration. This may cause issues. You can try to fix the file\'s duration from the File menu') });
+        void getSwal().toast.fire({ icon: 'warning', timer: 10000, text: i18n.t('This file does not have a valid duration. This may cause issues. You can try to fix the file\'s duration from the File menu') });
       }
 
       // This needs to be last, because it triggers <video> to load the video
@@ -1649,17 +1644,17 @@ function App() {
     }
 
     setSelectedBatchFiles(newSelectedBatchFiles);
-    if (alsoOpen) batchOpenSingleFile(newSelectedBatchFiles[0]);
+    if (alsoOpen) void batchOpenSingleFile(newSelectedBatchFiles[0]);
   }, [batchFiles, batchOpenSingleFile, selectedBatchFiles]);
 
   const batchOpenSelectedFile = useCallback(() => {
     const [firstSelectedBatchFile] = selectedBatchFiles;
     if (firstSelectedBatchFile == null) return;
-    batchOpenSingleFile(firstSelectedBatchFile);
+    void batchOpenSingleFile(firstSelectedBatchFile);
   }, [batchOpenSingleFile, selectedBatchFiles]);
 
   const onBatchFileSelect = useCallback((path: string) => {
-    if (selectedBatchFiles.includes(path)) batchOpenSingleFile(path);
+    if (selectedBatchFiles.includes(path)) void batchOpenSingleFile(path);
     else setSelectedBatchFiles([path]);
   }, [batchOpenSingleFile, selectedBatchFiles]);
 
@@ -1705,19 +1700,12 @@ function App() {
       const [firstExtractedPath] = await extractStreams({ customOutDir, streams: mainCopiedStreams });
       if (!hideAllNotifications && firstExtractedPath != null) {
         showOsNotification(i18n.t('All tracks have been extracted'));
-        openExportFinishedDialog({ filePath: firstExtractedPath, children: i18n.t('All streams have been extracted as separate files') });
+        void openExportFinishedDialog({ filePath: firstExtractedPath, children: i18n.t('All streams have been extracted as separate files') });
       }
     } catch (err) {
       showOsNotification(i18n.t('Failed to extract tracks'));
 
-      if (err instanceof RefuseOverwriteError) {
-        showRefuseToOverwrite();
-      } else if (err instanceof UserFacingError) {
-        errorToast(err.message);
-      } else {
-        errorToast(i18n.t('Failed to extract all streams'));
-        console.error('Failed to extract all streams', err);
-      }
+      handleExtractStreamsError(err, i18n.t('Failed to extract all streams'));
     } finally {
       setWorking(undefined);
     }
@@ -1959,18 +1947,18 @@ function App() {
     // On Windows and Linux an open dialog can not be both a file selector and a directory selector, so if you set `properties` to `['openFile', 'openDirectory']` on these platforms, a directory selector will be shown. #1995
     const { canceled, filePaths } = await showOpenDialog({ properties: ['openFile', 'multiSelections'], defaultPath: lastOpenedPathRef.current!, title: t('Open file') });
     if (canceled) return;
-    userOpenFiles(filePaths);
+    void userOpenFiles(filePaths);
   }, [t, userOpenFiles]);
 
   const openDirDialog = useCallback(async () => {
     const { canceled, filePaths } = await showOpenDialog({ properties: ['openDirectory', 'multiSelections'], defaultPath: lastOpenedPathRef.current!, title: t('Open folder') });
     if (canceled) return;
-    userOpenFiles(filePaths);
+    void userOpenFiles(filePaths);
   }, [t, userOpenFiles]);
 
   const concatBatch = useCallback(() => {
     if (batchFiles.length < 2) {
-      openFilesDialog();
+      void openFilesDialog();
       return;
     }
 
@@ -1982,7 +1970,7 @@ function App() {
 
   const copySegmentsToClipboard = useCallback(async () => {
     if (!isFileOpened || selectedSegments.length === 0) return;
-    mainApi.writeClipboardText(formatTsvHuman(selectedSegments));
+    void mainApi.writeClipboardText(formatTsvHuman(selectedSegments));
   }, [isFileOpened, selectedSegments]);
 
   const showIncludeExternalStreamsDialog = useCallback(async () => {
@@ -2182,14 +2170,14 @@ function App() {
       copySegmentsToClipboard,
       reloadFile: () => setCacheBuster((v) => v + 1),
       quit: () => mainApi.quitApp(),
-      closeCurrentFile: () => { closeFileWithConfirm(); },
+      closeCurrentFile: () => { void closeFileWithConfirm(); },
       exportYouTube,
       showStreamsSelector: handleShowStreamsSelectorClick,
       html5ify: () => userHtml5ifyCurrentFile({ ignoreRememberedValue: true }),
       openFilesDialog,
       openDirDialog,
       toggleSettings,
-      openSendReportDialog: () => { openSendReportDialogWithState(); },
+      openSendReportDialog: () => { void openSendReportDialogWithState(); },
       detectBlackScenes,
       detectSilentScenes,
       detectSceneChanges,
@@ -2255,19 +2243,12 @@ function App() {
       const [firstExtractedPath] = await extractStreams({ customOutDir, streams: mainStreams.filter((s) => s.index === index) });
       if (!hideAllNotifications && firstExtractedPath != null) {
         showOsNotification(i18n.t('Track has been extracted'));
-        openExportFinishedDialog({ filePath: firstExtractedPath, children: i18n.t('Track has been extracted') });
+        void openExportFinishedDialog({ filePath: firstExtractedPath, children: i18n.t('Track has been extracted') });
       }
     } catch (err) {
       showOsNotification(i18n.t('Failed to extract track'));
 
-      if (err instanceof RefuseOverwriteError) {
-        showRefuseToOverwrite();
-      } else if (err instanceof UserFacingError) {
-        errorToast(err.message);
-      } else {
-        errorToast(i18n.t('Failed to extract track'));
-        console.error('Failed to extract track', err);
-      }
+      handleExtractStreamsError(err, i18n.t('Failed to extract track'));
     } finally {
       setWorking(undefined);
     }
@@ -2327,7 +2308,7 @@ function App() {
           setWorking(undefined);
         }
       } else if (error.code === PIPELINE_ERROR_READ) { // file is not readable or was removed
-        getSwal().toast.fire({ icon: 'error', timer: 10000, text: i18n.t('Failed to read file. Perhaps it has been moved?') });
+        void getSwal().toast.fire({ icon: 'error', timer: 10000, text: i18n.t('Failed to read file. Perhaps it has been moved?') });
       }
     } catch (err) {
       toastError(err);
@@ -2455,7 +2436,7 @@ function App() {
       const filePaths = [...ev.dataTransfer.files].map((f) => webUtils.getPathForFile(f));
       if (filePaths.length !== 1) return;
       await mainApi.focusWindow();
-      addStreamSourceFile(filePaths[0]!);
+      void addStreamSourceFile(filePaths[0]!);
     });
   }, [addStreamSourceFile, withErrorHandling]);
 
@@ -2465,7 +2446,7 @@ function App() {
       if (!ev.dataTransfer) return;
       const filePaths = [...ev.dataTransfer.files].map((f) => webUtils.getPathForFile(f));
       await mainApi.focusWindow();
-      userOpenFiles(filePaths);
+      void userOpenFiles(filePaths);
     }
     const element = videoContainerRef.current;
     element?.addEventListener('drop', onDrop);
@@ -2494,11 +2475,11 @@ function App() {
   }, [setWaveformMode]);
 
   useEffect(() => {
-    if (!isStoreBuild && !hasDisabledNetworking()) loadMifiLink().then(setMifiLink);
+    if (!isStoreBuild && !hasDisabledNetworking()) void loadMifiLink().then(setMifiLink);
   }, []);
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       setFfmpegInfo(await runStartupCheck({ customFfPath, onError: ({ title, message }) => setGenericError({ title, err: message }) }));
     })();
   }, [customFfPath, setGenericError]);
@@ -2619,9 +2600,9 @@ function App() {
                           </>
                         )}
 
-                        <div style={{ cursor: 'pointer', pointerEvents: 'initial', color: 'var(--gray-12)', opacity: 0.7, padding: '.2em', marginLeft: '.5em' }} role="button" onClick={() => incrementMediaSourceQuality()} title={t('Select playback quality')}>{mediaSourceQualities[mediaSourceQuality]}</div>
+                        <div style={{ cursor: 'pointer', pointerEvents: 'initial', color: 'var(--gray-12)', opacity: 0.7, padding: '.2em', marginLeft: '.5em' }} role="button" tabIndex={0} onClick={() => incrementMediaSourceQuality()} title={t('Select playback quality')}>{mediaSourceQualities[mediaSourceQuality]}</div>
 
-                        {!compatPlayerRequired && <FaRegTimesCircle role="button" style={{ cursor: 'pointer', pointerEvents: 'initial', verticalAlign: 'middle', padding: '.2em' }} onClick={handleHideCompatPlayerClick} />}
+                        {!compatPlayerRequired && <FaRegTimesCircle role="button" tabIndex={0} style={{ cursor: 'pointer', pointerEvents: 'initial', verticalAlign: 'middle', padding: '.2em' }} onClick={handleHideCompatPlayerClick} />}
                       </div>
                     )}
 

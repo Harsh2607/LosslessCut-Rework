@@ -789,7 +789,7 @@ const KeyboardShortcuts = memo(({
   }, [currentCutSeg, mouseWheelFrameSeekModifierKey, mouseWheelKeyframeSeekModifierKey, mouseWheelZoomModifierKey, segmentMouseModifierKey, t]);
 
   useEffect(() => {
-    updateKeyboardLayout();
+    void updateKeyboardLayout();
   }, [updateKeyboardLayout]);
 
   useEffect(() => {

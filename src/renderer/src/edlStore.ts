@@ -191,28 +191,18 @@ export async function exportEdlFile({ type, cutSegments, customOutDir, filePath,
 }) {
   invariant(filePath != null);
 
-  let filters: { name: string, extensions: string[] }[] | undefined;
-  let ext: string | undefined;
-  // eslint-disable-next-line unicorn/prefer-switch
-  if (type === 'csv') {
-    ext = 'csv';
-    filters = [{ name: i18n.t('CSV files'), extensions: [ext, 'txt'] }];
-  } else if (type === 'tsv-human') {
-    ext = 'tsv';
-    filters = [{ name: i18n.t('TXT files'), extensions: [ext, 'txt'] }];
-  } else if (type === 'csv-human') {
-    ext = 'csv';
-    filters = [{ name: i18n.t('TXT files'), extensions: [ext, 'txt'] }];
-  } else if (type === 'csv-frames') {
-    ext = 'csv';
-    filters = [{ name: i18n.t('TXT files'), extensions: [ext, 'txt'] }];
-  } else if (type === 'srt') {
-    ext = 'srt';
-    filters = [{ name: i18n.t('Subtitles (SRT)'), extensions: [ext, 'txt'] }];
-  } else if (type === 'llc') {
-    ext = 'llc';
-    filters = [{ name: i18n.t('LosslessCut project'), extensions: [ext, 'llc'] }];
-  }
+  const exportConfigs: Record<string, { ext: string; filterName: string; extensions: string[] }> = {
+    csv: { ext: 'csv', filterName: 'CSV files', extensions: ['csv', 'txt'] },
+    'tsv-human': { ext: 'tsv', filterName: 'TXT files', extensions: ['tsv', 'txt'] },
+    'csv-human': { ext: 'csv', filterName: 'TXT files', extensions: ['csv', 'txt'] },
+    'csv-frames': { ext: 'csv', filterName: 'TXT files', extensions: ['csv', 'txt'] },
+    srt: { ext: 'srt', filterName: 'Subtitles (SRT)', extensions: ['srt', 'txt'] },
+    llc: { ext: 'llc', filterName: 'LosslessCut project', extensions: ['llc'] },
+  };
+
+  const expConfig = exportConfigs[type];
+  const ext = expConfig?.ext;
+  const filters = expConfig ? [{ name: i18n.t(expConfig.filterName), extensions: expConfig.extensions }] : undefined;
 
   const defaultPath = getOutPath({ filePath, customOutDir, fileName: `${basename(filePath)}.${ext}` });
 

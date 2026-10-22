@@ -16,8 +16,8 @@ function CopyClipboardButton({ text, style, children }: {
   const animation = useAnimation();
 
   const onClick = useCallback(() => {
-    mainApi.writeClipboardText(text);
-    animation.start({
+    void mainApi.writeClipboardText(text);
+    void animation.start({
       scale: [1, 1.5, 1],
       transition: { duration: 0.2 },
     });

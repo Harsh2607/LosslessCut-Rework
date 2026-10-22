@@ -176,10 +176,11 @@ export default ({ keyBindings, keyUpActions, getKeyboardAction, closeExportConfi
   }, [setKeyboardLayoutMap]);
 
   useEffect(() => {
-    updateKeyboardLayout();
+    void updateKeyboardLayout();
 
-    window.addEventListener('focus', updateKeyboardLayout);
-    return () => window.removeEventListener('focus', updateKeyboardLayout);
+    const onFocus = () => { void updateKeyboardLayout(); };
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
   }, [updateKeyboardLayout]);
 
   return {

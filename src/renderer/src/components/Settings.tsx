@@ -353,7 +353,7 @@ function Settings({
         <Row>
           <KeyCell>{t('Snapshot capture quality')}</KeyCell>
           <td>
-            <input type="range" min={1} max={1000} style={{ width: 200 }} value={Math.round(captureFrameQuality * 1000)} onChange={(e) => setCaptureFrameQuality(Math.max(Math.min(1, parseInt(e.target.value, 10) / 1000), 0))} /><br />
+            <input type="range" min={1} max={1000} style={{ width: 200 }} value={Math.round(captureFrameQuality * 1000)} onChange={(e) => setCaptureFrameQuality(Math.max(Math.min(1, Number.parseInt(e.target.value, 10) / 1000), 0))} /><br />
             {Math.round(captureFrameQuality * 100)}%
           </td>
         </Row>

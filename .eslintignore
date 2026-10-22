@@ -6,4 +6,5 @@
 /website/.wrangler
 /website/.astro
 /script/captureScreens.js
+/script/runSonar.js
 /scratch

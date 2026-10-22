@@ -43,7 +43,7 @@ function PlaybackStreamSelector({
 
   const onChange = useCallback((e: ChangeEvent<HTMLSelectElement>, fn: (a: number | undefined) => void) => {
     resetTimer();
-    const index = e.target.value ? parseInt(e.target.value, 10) : undefined;
+    const index = e.target.value ? Number.parseInt(e.target.value, 10) : undefined;
     fn(index);
     e.target.blur();
   }, [resetTimer]);

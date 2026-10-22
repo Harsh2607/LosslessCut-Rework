@@ -45,7 +45,7 @@ export default ({ filePath, relevantTime, fileDuration, waveformEnabled, audioSt
   useEffect(() => {
     let aborted = false;
 
-    (async () => {
+    void (async () => {
       if (!filePath || fileDuration == null || !audioStream || !waveformEnabled) {
         return;
       }

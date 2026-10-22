@@ -174,7 +174,7 @@ export function useDialog() {
     });
 
     if (response) {
-      showItemInFolder(filePath);
+      void showItemInFolder(filePath);
     }
   }, [showGenericDialog, t]);
 

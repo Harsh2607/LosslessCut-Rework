@@ -59,7 +59,7 @@ export async function getCodecParams({ path, fileDuration, streams }: {
 
   if (videoStream == null) throw new Error('Smart cut only works on videos');
 
-  let videoBitrate = parseInt(videoStream.bit_rate!, 10);
+  let videoBitrate = Number.parseInt(videoStream.bit_rate!, 10);
   if (Number.isNaN(videoBitrate)) {
     console.warn('Unable to detect input bitrate.');
     const size = await readFileSize(path);

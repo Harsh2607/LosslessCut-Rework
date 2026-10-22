@@ -38,13 +38,13 @@ const supportedFormats = ['MP4', 'MKV', 'MOV', 'WEBM', 'MP3', 'WAV', 'M4A', 'FLA
 
 function NoFileLoaded({ mifiLink, onClick, darkMode, keyBindingByAction }: {
   mifiLink: unknown,
-  currentCutSeg?: StateSegment,
+  currentCutSeg?: StateSegment | undefined,
   onClick: () => void,
   darkMode?: boolean,
   keyBindingByAction: Record<string, KeyBinding>,
 }) {
   const { t } = useTranslation();
-  const { simpleMode } = useUserSettings();
+  const { simpleMode, setSimpleMode } = useUserSettings();
   const [dragging, setDragging] = useState(false);
 
   const isMac = useMemo(() => typeof navigator !== 'undefined' && /Mac|iPod|iPhone|iPad/.test(navigator.platform), []);
@@ -115,17 +115,20 @@ function NoFileLoaded({ mifiLink, onClick, darkMode, keyBindingByAction }: {
 
         <span>•</span>
 
-        <div role="button" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', alignItems: 'center', gap: '.4em' }}>
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setSimpleMode(!simpleMode); }}
+          style={{ display: 'flex', alignItems: 'center', gap: '.4em', background: 'none', border: 'none', color: 'inherit', padding: 0, font: 'inherit', cursor: 'pointer' }}
+        >
           <SimpleModeButton style={{ verticalAlign: 'middle' }} />
           <span>{simpleMode ? t('Show advanced view') : t('Show simple view')}</span>
-        </div>
+        </button>
       </div>
 
       {mifiLink && typeof mifiLink === 'object' && 'loadUrl' in mifiLink && typeof mifiLink.loadUrl === 'string' && mifiLink.loadUrl ? (
         <div style={{ position: 'relative', marginTop: '1em', width: '24em', height: '6em' }}>
           <iframe src={`${mifiLink.loadUrl}#dark=${darkMode ? 'true' : 'false'}`} title="iframe" style={{ background: 'rgba(0,0,0,0)', border: 'none', pointerEvents: 'none', width: '100%', height: '100%', position: 'absolute', colorScheme: 'initial' }} />
-          {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus */}
-          <div style={{ width: '100%', height: '100%', position: 'absolute', cursor: 'pointer' }} title={t('Open link in browser')} role="button" onClick={(e) => { e.stopPropagation(); if ('targetUrl' in mifiLink && typeof mifiLink.targetUrl === 'string') mainApi.openExternal(mifiLink.targetUrl); }} />
+          <div style={{ width: '100%', height: '100%', position: 'absolute', cursor: 'pointer' }} title={t('Open link in browser')} role="button" tabIndex={0} onClick={(e) => { e.stopPropagation(); if ('targetUrl' in mifiLink && typeof mifiLink.targetUrl === 'string') void mainApi.openExternal(mifiLink.targetUrl); }} />
         </div>
       ) : undefined}
     </div>

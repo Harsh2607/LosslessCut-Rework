@@ -154,7 +154,7 @@ function runFfmpegProcess(args: readonly string[], customExecaOptions?: ExecaOpt
 
   const wrapped = { process, abortController };
 
-  (async () => {
+  void (async () => {
     runningFfmpegs.add(wrapped);
     try {
       await process;
@@ -338,7 +338,7 @@ export async function detectSceneChanges({ filePath, streamId, minChange, onProg
     // eslint-disable-next-line unicorn/better-regex
     const match = line.match(/^frame:\d+\s+pts:\d+\s+pts_time:([\d.]+)/);
     if (!match) return;
-    const time = parseFloat(match[1]!);
+    const time = Number.parseFloat(match[1]!);
     if (!Number.isNaN(time)) {
       if (lastTime != null && time > lastTime) {
         onSegmentDetected({ start: from + lastTime, end: from + time });

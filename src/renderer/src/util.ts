@@ -7,6 +7,8 @@ import pRetry from 'p-retry';
 import type { ExecaError } from 'execa';
 import confetti from 'canvas-confetti';
 import invariant from 'tiny-invariant';
+import { arrayMove } from '@dnd-kit/sortable';
+import type { UniqueIdentifier } from '@dnd-kit/core';
 
 import { ffmpegExtractWindow } from './util/constants';
 import { appName } from '../../main/common';
@@ -30,6 +32,17 @@ export { isWindows, isMac, appVersion, appPath };
 export const trashFile = async (path: string) => ipcRenderer.invoke('tryTrashItem', path);
 
 export const showItemInFolder = async (path: string) => ipcRenderer.invoke('showItemInFolder', path);
+
+export function reorderSortableItems<T extends { id: UniqueIdentifier }>(
+  items: T[],
+  activeId: UniqueIdentifier,
+  overId: UniqueIdentifier,
+): T[] {
+  const oldIndex = items.findIndex((item) => item.id === activeId);
+  const newIndex = items.findIndex((item) => item.id === overId);
+  if (oldIndex === -1 || newIndex === -1) return items;
+  return arrayMove(items, oldIndex, newIndex);
+}
 
 
 export function getFileDir(filePath?: string) {
@@ -116,13 +129,22 @@ export async function getPathReadAccessError(pathIn: string) {
   }
 }
 
+function getSecureRandom(): number {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const buf = new Uint32Array(1);
+    crypto.getRandomValues(buf);
+    return (buf[0] ?? 0) / 0xffffffff;
+  }
+  return 0.5;
+}
+
 // export const testFailFsOperation = isDev;
 export const testFailFsOperation = false;
 
 // Retry because sometimes write operations fail on windows due to the file being locked for various reasons (often anti-virus) #272 #1797 #1704
 export async function fsOperationWithRetry<T>(operation: () => Promise<T>, { signal, retries = 10, minTimeout = 100, maxTimeout = 2000, ...opts }: Options & { retries?: number | undefined, minTimeout?: number | undefined, maxTimeout?: number | undefined } = {}): Promise<T> {
   return pRetry<T>(async () => {
-    if (testFailFsOperation && Math.random() > 0.3) throw Object.assign(new Error('test delete failure'), { code: 'EPERM' });
+    if (testFailFsOperation && getSecureRandom() > 0.3) throw Object.assign(new Error('test delete failure'), { code: 'EPERM' });
     return operation();
   }, {
     retries,
@@ -316,7 +338,7 @@ export function shuffleArray<T>(arrayIn: T[]) {
   // While there remain elements to shuffle...
   while (currentIndex !== 0) {
     // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
+    randomIndex = Math.floor(getSecureRandom() * currentIndex);
     currentIndex -= 1;
 
     // And swap it with the current element.
@@ -403,7 +425,7 @@ export function getImportProjectType(filePath: string) {
 }
 
 export function getFileSize(format: FFprobeFormat) {
-  const fileSize = parseInt(format.size, 10);
+  const fileSize = Number.parseInt(format.size, 10);
   if (Number.isNaN(fileSize)) return undefined;
   return fileSize;
 }
@@ -545,7 +567,7 @@ export const getEnableImportChaptersOptions = (): Record<EnableImportChapters, s
 export const dialogButtonOrder = isWindows ? 'rtl' : 'ltr'; // use ltr for mac and linux, rtl for windows
 
 export function shootConfetti(options?: confetti.Options) {
-  confetti({
+  void confetti({
     particleCount: 30,
     angle: 110,
     startVelocity: 30,

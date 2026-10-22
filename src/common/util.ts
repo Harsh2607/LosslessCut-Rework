@@ -1,7 +1,7 @@
 import type { AudioChannelInfo, FfmpegHwAccel } from './types.ts';
 
 export const parseFfprobeDuration = (durationStr: string | undefined) => (
-  durationStr != null ? parseFloat(durationStr) : undefined
+  durationStr != null ? Number.parseFloat(durationStr) : undefined
 );
 
 export const getHwaccelArgs = (hwaccel: FfmpegHwAccel) => (hwaccel !== 'none' ? ['-hwaccel', hwaccel] : []);
@@ -55,8 +55,8 @@ export function truncateFileName(name: string, maxLength: number, utf16 = false)
 export function parseRatio(str: string, char = '/') {
   const split = str.split(char);
   if (split.length !== 2) return undefined;
-  const num = parseInt(split[0]!, 10);
-  const den = parseInt(split[1]!, 10);
+  const num = Number.parseInt(split[0]!, 10);
+  const den = Number.parseInt(split[1]!, 10);
   if (Number.isNaN(num) || Number.isNaN(den)) return undefined;
   if (den <= 0) return undefined;
   return num / den;

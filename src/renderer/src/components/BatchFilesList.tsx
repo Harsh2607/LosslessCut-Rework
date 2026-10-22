@@ -6,13 +6,14 @@ import { FaTimes, FaHatWizard, FaSortAlphaDown, FaSortAlphaUp } from 'react-icon
 import { AiOutlineMergeCells } from 'react-icons/ai';
 import type { DragEndEvent, DragStartEvent, UniqueIdentifier } from '@dnd-kit/core';
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import BatchFile from './BatchFile';
 import { controlsBackground, darkModeTransition, primaryColor } from '../colors';
 import type { BatchFile as BatchFileType } from '../types';
 import useUserSettings from '../hooks/useUserSettings';
+import { reorderSortableItems } from '../util';
 
 
 const iconStyle = {
@@ -68,11 +69,8 @@ function BatchFilesList({ selectedBatchFiles, filePath, width, batchFiles, setBa
   const handleDragEnd = (event: DragEndEvent) => {
     setDraggingId(undefined);
     const { active, over } = event;
-    if (over != null && active.id !== over?.id) {
-      const ids = sortableList.map((s) => s.id);
-      const oldIndex = ids.indexOf(active.id as string);
-      const newIndex = ids.indexOf(over.id as string);
-      const newList = arrayMove(sortableList, oldIndex, newIndex);
+    if (over != null && active.id !== over.id) {
+      const newList = reorderSortableItems(sortableList, active.id, over.id);
       setBatchFiles(newList.map((item) => item.batchFile));
     }
   };

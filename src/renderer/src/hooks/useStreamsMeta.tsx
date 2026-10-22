@@ -46,7 +46,7 @@ export default function useStreamsMeta({ mainStreams, externalFilesMeta, filePat
 
   const copyFileStreams = useMemo(() => Object.entries(copyStreamIdsByFile).map(([path, streamIdsMap]) => ({
     path,
-    streamIds: Object.entries(streamIdsMap).filter(([, shouldCopy]) => shouldCopy).map(([streamIdStr]) => parseInt(streamIdStr, 10)),
+    streamIds: Object.entries(streamIdsMap).filter(([, shouldCopy]) => shouldCopy).map(([streamIdStr]) => Number.parseInt(streamIdStr, 10)),
   })), [copyStreamIdsByFile]);
 
   // total number of streams to copy for ALL files

@@ -70,6 +70,7 @@ function Marker({
         <div
           style={markerButtonStyle}
           role="button"
+          tabIndex={0}
           onClick={() => onClick()}
         >
           {segNum + 1}

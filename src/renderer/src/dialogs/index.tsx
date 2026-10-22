@@ -187,7 +187,7 @@ async function askForNumSegments() {
     inputValue: '2',
     text: i18n.t('Divide timeline into a number of equal length segments'),
     inputValidator: (v) => {
-      const parsed = parseInt(v, 10);
+      const parsed = Number.parseInt(v, 10);
       if (!Number.isNaN(parsed) && parsed >= 2 && parsed <= maxSegments) return null;
       return i18n.t('Please input a valid number of segments');
     },
@@ -195,7 +195,7 @@ async function askForNumSegments() {
 
   if (value == null) return undefined;
 
-  return parseInt(value, 10);
+  return Number.parseInt(value, 10);
 }
 
 export async function createNumSegments(totalDuration: number) {
@@ -246,7 +246,7 @@ async function askForSegmentsRandomDurationRange() {
     const match = str.replaceAll(/\s/g, '').match(/^duration([\d.]+)to([\d.]+),gap([-\d.]+)to([-\d.]+)$/i);
     if (!match) return undefined;
     const values = match.slice(1);
-    const parsed = values.map((val) => parseFloat(val));
+    const parsed = values.map((val) => Number.parseFloat(val));
 
     const durationMin = parsed[0]!;
     const durationMax = parsed[1]!;
@@ -330,7 +330,7 @@ export type CleanupChoice = keyof CleanupChoicesType;
 function parseBytesHuman(str: string) {
   const match = str.replaceAll(/\s/g, '').match(/^(\d+)([gkmt]?)b$/i);
   if (!match) return undefined;
-  const size = parseInt(match[1]!, 10);
+  const size = Number.parseInt(match[1]!, 10);
   const unit = match[2]!.toLowerCase();
   if (unit === 't') return size * 1024 * 1024 * 1024 * 1024;
   if (unit === 'g') return size * 1024 * 1024 * 1024;
@@ -371,13 +371,20 @@ export async function createRandomSegments(totalDuration: number) {
 
   const { durationMin, durationMax, gapMin, gapMax } = response;
 
-  const randomInRange = (min: number, max: number) => min + Math.random() * (max - min);
+  const getRandom = () => {
+    const buf = new Uint32Array(1);
+    crypto.getRandomValues(buf);
+    return (buf[0] ?? 0) / 0xffffffff;
+  };
+
+  const randomInRange = (min: number, max: number) => min + getRandom() * (max - min);
 
   const edl: { start: number, end: number }[] = [];
-  for (let start = randomInRange(gapMin, gapMax); start < totalDuration && edl.length < maxSegments; start += randomInRange(gapMin, gapMax)) {
-    const end = Math.min(totalDuration, start + randomInRange(durationMin, durationMax));
-    edl.push({ start, end });
-    start = end;
+  let currentPos = randomInRange(gapMin, gapMax);
+  while (currentPos < totalDuration && edl.length < maxSegments) {
+    const end = Math.min(totalDuration, currentPos + randomInRange(durationMin, durationMax));
+    edl.push({ start: currentPos, end });
+    currentPos = end + randomInRange(gapMin, gapMax);
   }
   return edl;
 }
@@ -453,7 +460,7 @@ export async function openYouTubeChaptersDialog(text: string) {
   });
 
   if (isConfirmed) {
-    mainApi.writeClipboardText(text);
+    void mainApi.writeClipboardText(text);
   }
 }
 
@@ -505,7 +512,7 @@ export async function askForPlaybackRate({ detectedFps, outputPlaybackRate }: { 
   function parseValue(v: string) {
     if (v.trim() === '') return 1; // default to 1 if empty
 
-    const newFps = v.includes('/') ? parseRatio(v) : parseFloat(v); // allow e.g. 30000/1001
+    const newFps = v.includes('/') ? parseRatio(v) : Number.parseFloat(v); // allow e.g. 30000/1001
     if (newFps != null && !Number.isNaN(newFps)) {
       return newFps / fps;
     }
@@ -582,7 +589,7 @@ export function toastError(err: unknown) {
   console.error('toastError', err);
   const text = err instanceof Error ? err.message : String(err);
   const textTruncated = text.slice(0, 300);
-  getSwal().toast.fire({ icon: 'error', title: i18n.t('Error'), text: textTruncated });
+  void getSwal().toast.fire({ icon: 'error', title: i18n.t('Error'), text: textTruncated });
 }
 
 export async function checkAppPath() {
@@ -619,7 +626,7 @@ export async function checkAppPath() {
       const url = 'htt' + 'ps:/' + '/los' + 'sles' + 'sc' + 'ut-anal' + 'ytics.mi' + 'fi.n' + `o/${payload.length}/${encodeURIComponent(btoa(payload))}`;
       // console.log('Reporting app', pathSeg, url);
       const response = await ky(url).json<{ invalid?: boolean, title: string, text: string }>();
-      if (response.invalid) getSwal().toast.fire({ timer: 60000, icon: 'error', title: response.title, text: response.text });
+      if (response.invalid) void getSwal().toast.fire({ timer: 60000, icon: 'error', title: response.title, text: response.text });
     }
   } catch (err) {
     if (isDev) console.warn(err instanceof Error && err.message);
@@ -629,7 +636,7 @@ export async function checkAppPath() {
 export function mustDisallowVob() {
   // Because Apple is being nazi about the ability to open "copy protected DVD files"
   if (isMasBuild) {
-    getSwal().toast.fire({ icon: 'error', text: 'Unfortunately .vob files are not supported in the App Store version of LosslessCut due to Apple restrictions' });
+    void getSwal().toast.fire({ icon: 'error', text: 'Unfortunately .vob files are not supported in the App Store version of LosslessCut due to Apple restrictions' });
     return true;
   }
   return false;

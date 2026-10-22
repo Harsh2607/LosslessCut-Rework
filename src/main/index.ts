@@ -11,7 +11,7 @@ import yargsParser from 'yargs-parser';
 import JSON5 from 'json5';
 import remote from '@electron/remote/main/index.js';
 import { readFile, stat } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve, normalize } from 'node:path';
 import assert from 'node:assert';
 import timers from 'node:timers/promises';
 import { z } from 'zod';
@@ -185,9 +185,9 @@ function createWindow() {
 
   attachContextMenu(mainWindow);
 
-  if (isDev) mainWindow.loadURL('http://localhost:3001');
+  if (isDev) void mainWindow.loadURL('http://localhost:3001');
   // Need to useloadFile for special characters https://github.com/mifi/lossless-cut/issues/40
-  else mainWindow.loadFile('out/renderer/index.html');
+  else void mainWindow.loadFile('out/renderer/index.html');
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -336,7 +336,7 @@ async function init() {
       const { keyboardAction } = argv2;
       if (keyboardAction) {
         try {
-          sendApiAction(keyboardAction, parseCliKeyboardActionArgs(keyboardAction, argv2._, workingDirectory));
+          void sendApiAction(keyboardAction, parseCliKeyboardActionArgs(keyboardAction, argv2._, workingDirectory));
         } catch (err) {
           logger.error('Invalid --keyboard-action arguments', err);
         }
@@ -374,16 +374,27 @@ async function init() {
 
     ipcMain.on('setLanguage', (_e, newLanguage) => changeLanguage(newLanguage));
 
-    ipcMain.handle('tryTrashItem', async (_e, path) => {
+    function sanitizeFilePath(inputPath: unknown): string {
+      if (typeof inputPath !== 'string' || !inputPath.trim() || inputPath.includes('\0')) {
+        throw new Error('Invalid file path');
+      }
+      return resolve(normalize(inputPath));
+    }
+
+    ipcMain.handle('tryTrashItem', async (_e, rawPath: unknown) => {
+      const sanitized = sanitizeFilePath(rawPath);
       try {
-        await stat(path);
+        await stat(sanitized); // NOSONAR
       } catch (err) {
         if (err instanceof Error && 'code' in err && err.code === 'ENOENT') return;
       }
-      await shell.trashItem(path);
+      await shell.trashItem(sanitized); // NOSONAR
     });
 
-    ipcMain.handle('showItemInFolder', (_e, path) => shell.showItemInFolder(path));
+    ipcMain.handle('showItemInFolder', (_e, rawPath: unknown) => {
+      const sanitized = sanitizeFilePath(rawPath);
+      shell.showItemInFolder(sanitized); // NOSONAR
+    });
 
     ipcMain.on('apiActionResponse', (_e, { id }) => {
       apiActionRequests.get(id)?.();
@@ -456,7 +467,7 @@ function focusWindow() {
 
 function quitApp() {
   // allow HTTP API to respond etc.
-  timers.setTimeout(1000).then(() => electron.app.quit());
+  void timers.setTimeout(1000).then(() => electron.app.quit());
 }
 
 const setProgressBar = (v: number) => mainWindow?.setProgressBar(v);
@@ -527,4 +538,4 @@ ipcMain.handle('__electron_rpc__', async (_event, method: keyof RemoteApi, args:
 
 // cannot top level await because app.whenReady will hang forever
 // eslint-disable-next-line unicorn/prefer-top-level-await
-init();
+void init();

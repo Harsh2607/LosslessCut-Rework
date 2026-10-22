@@ -39,7 +39,7 @@ export default function GpsMap({ filePath, streamIndex }: {
   const [points, setPoints] = useState<Awaited<ReturnType<typeof getGpsTrack>>>();
 
   useEffect(() => {
-    (async () => {
+    void (async () => {
       try {
         const allGpsPoints = await getGpsTrack({ filePath, streamIndex });
 

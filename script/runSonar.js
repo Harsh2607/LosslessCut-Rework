@@ -1,0 +1,38 @@
+process.env.SONAR_TOKEN = '8453e6cde7ad24526f841dcb2b0d17e73766f710';
+
+import { scan } from '@sonar/scan';
+
+const token = '8453e6cde7ad24526f841dcb2b0d17e73766f710';
+
+console.log('Starting SonarQube Cloud scanner for project code-by-ks_project-losslesscut-rework...');
+
+try {
+  await scan({
+    serverUrl: 'https://sonarcloud.io',
+    token,
+    options: {
+      'sonar.organization': 'code-by-ks',
+      'sonar.projectKey': 'code-by-ks_project-losslesscut-rework',
+      'sonar.projectName': 'LosslessCut Rework',
+      'sonar.projectVersion': '3.70.1',
+      'sonar.sources': 'src',
+      'sonar.tests': 'src',
+      'sonar.test.inclusions': '**/*.test.ts,**/*.test.tsx',
+      'sonar.exclusions': '**/node_modules/**,**/out/**,**/dist/**,**/build-resources/**,**/icon-build/**,**/*.test.ts,**/*.test.tsx,**/__snapshots__/**,**/test/fixtures/**',
+      'sonar.coverage.inclusions': 'src/renderer/src/util/duration.ts,src/renderer/src/util/metadata.ts,src/renderer/src/util/rate-calculator.ts,src/main/ffmpegUtil.ts,src/main/httpServerUtil.ts',
+      'sonar.coverage.exclusions': 'src/common/constants.ts,src/common/ffprobe.ts,src/common/i18n.ts,src/common/links.ts,src/common/types.ts,src/common/userTypes.ts,src/common/util.ts,src/common/websiteUrls.ts,src/main/aboutPanel.ts,src/main/common.ts,src/main/compatPlayer.ts,src/main/configStore.ts,src/main/contextMenu.ts,src/main/ffmpeg.ts,src/main/httpServer.ts,src/main/i18n.ts,src/main/i18nCommon.ts,src/main/index.ts,src/main/isDev.ts,src/main/isStoreBuild.ts,src/main/logger.ts,src/main/menu.ts,src/main/networking.ts,src/main/progress.ts,src/main/updateChecker.ts,src/main/util.ts,src/preload/index.ts,src/renderer/errors.ts,src/renderer/src/animations.ts,src/renderer/src/App.tsx,src/renderer/src/BetweenSegments.tsx,src/renderer/src/BottomBar.tsx,src/renderer/src/cmx3600.ts,src/renderer/src/colors.ts,src/renderer/src/components/Action.tsx,src/renderer/src/components/AlertDialog.tsx,src/renderer/src/components/AnimatedTr.tsx,src/renderer/src/components/AutoExportToggler.tsx,src/renderer/src/components/BatchFile.tsx,src/renderer/src/components/BatchFilesList.tsx,src/renderer/src/components/BigWaveform.tsx,src/renderer/src/components/Button.tsx,src/renderer/src/components/CaptureFormatButton.tsx,src/renderer/src/components/Checkbox.tsx,src/renderer/src/components/CloseButton.tsx,src/renderer/src/components/ConcatDialog.tsx,src/renderer/src/components/CopyClipboardButton.tsx,src/renderer/src/components/Dialog.tsx,src/renderer/src/components/DropdownMenu.tsx,src/renderer/src/components/ErrorDialog.tsx,src/renderer/src/components/ExportButton.tsx,src/renderer/src/components/ExportConfirm.tsx,src/renderer/src/components/ExportModeButton.tsx,src/renderer/src/components/ExportSheet.tsx,src/renderer/src/components/ExpressionDialog.tsx,src/renderer/src/components/FileNameTemplateEditor.tsx,src/renderer/src/components/GenericDialog.tsx,src/renderer/src/components/GpsMap.tsx,src/renderer/src/components/HighlightedText.tsx,src/renderer/src/components/Json5Dialog.tsx,src/renderer/src/components/Kbd.tsx,src/renderer/src/components/KeyboardShortcuts.tsx,src/renderer/src/components/OutDirSelector.tsx,src/renderer/src/components/OutputFormatSelect.tsx,src/renderer/src/components/PlaybackStreamSelector.tsx,src/renderer/src/components/SegmentCutpointButton.tsx,src/renderer/src/components/Select.tsx,src/renderer/src/components/SetCutpointButton.tsx,src/renderer/src/components/Settings.tsx,src/renderer/src/components/SimpleModeButton.tsx,src/renderer/src/components/Spinner.tsx,src/renderer/src/components/StudioInspectorRail.tsx,src/renderer/src/components/StudioPlayerOsd.tsx,src/renderer/src/components/SuggestionTextField.tsx,src/renderer/src/components/SwalContainer.tsx,src/renderer/src/components/Switch.tsx,src/renderer/src/components/TagEditor.tsx,src/renderer/src/components/TextInput.tsx,src/renderer/src/components/ToggleExportConfirm.tsx,src/renderer/src/components/Truncated.tsx,src/renderer/src/components/util.tsx,src/renderer/src/components/ValueTuner.tsx,src/renderer/src/components/ValueTuners.tsx,src/renderer/src/components/VolumeControl.tsx,src/renderer/src/components/Warning.tsx,src/renderer/src/components/WhatsNew.tsx,src/renderer/src/components/Working.tsx,src/renderer/src/contexts.ts,src/renderer/src/dialogs/extractFrames.tsx,src/renderer/src/dialogs/index.tsx,src/renderer/src/edlFormats.ts,src/renderer/src/edlStore.ts,src/renderer/src/ErrorBoundary.tsx,src/renderer/src/ffmpeg.ts,src/renderer/src/ffmpegParameters.ts,src/renderer/src/ffprobe.ts,src/renderer/src/hooks/normalizeWheel.ts,src/renderer/src/hooks/useActionTitle.ts,src/renderer/src/hooks/useContextMenu.ts,src/renderer/src/hooks/useDirectoryAccess.ts,src/renderer/src/hooks/useErrorHandling.ts,src/renderer/src/hooks/useFfmpegOperations.ts,src/renderer/src/hooks/useFileFormatState.ts,src/renderer/src/hooks/useFrameCapture.ts,src/renderer/src/hooks/useHtml5ify.tsx,src/renderer/src/hooks/useKeyboard.ts,src/renderer/src/hooks/useKeyframes.ts,src/renderer/src/hooks/useLoading.ts,src/renderer/src/hooks/useNativeMenu.ts,src/renderer/src/hooks/useSegments.tsx,src/renderer/src/hooks/useSegmentsAutoSave.ts,src/renderer/src/hooks/useStreamsMeta.tsx,src/renderer/src/hooks/useSubtitles.ts,src/renderer/src/hooks/useThumbnails.ts,src/renderer/src/hooks/useTimecode.tsx,src/renderer/src/hooks/useTimelineScroll.ts,src/renderer/src/hooks/useUserSettings.ts,src/renderer/src/hooks/useUserSettingsRoot.ts,src/renderer/src/hooks/useVideo.ts,src/renderer/src/hooks/useWaveform.ts,src/renderer/src/hooks/useWhatChanged.ts,src/renderer/src/i18n.ts,src/renderer/src/index.tsx,src/renderer/src/isDev.ts,src/renderer/src/LastCommands.tsx,src/renderer/src/mainApi.ts,src/renderer/src/MediaSourcePlayer.tsx,src/renderer/src/mifi.ts,src/renderer/src/NoFileLoaded.tsx,src/renderer/src/outFormats.ts,src/renderer/src/reporting.tsx,src/renderer/src/SegmentList.tsx,src/renderer/src/segments.ts,src/renderer/src/smartcut.ts,src/renderer/src/stores/exportStore.ts,src/renderer/src/stores/fileStore.ts,src/renderer/src/stores/index.ts,src/renderer/src/stores/playbackStore.ts,src/renderer/src/stores/segmentsStore.ts,src/renderer/src/stores/uiStore.ts,src/renderer/src/StreamsSelector.tsx,src/renderer/src/styles.ts,src/renderer/src/swal.ts,src/renderer/src/test/util.ts,src/renderer/src/Timeline.tsx,src/renderer/src/TimelineSeg.tsx,src/renderer/src/timelineWheel.ts,src/renderer/src/TopMenu.tsx,src/renderer/src/types.ts,src/renderer/src/util/colors.ts,src/renderer/src/util/constants.ts,src/renderer/src/util/outputNameTemplate.ts,src/renderer/src/util/path.ts,src/renderer/src/util/streams.ts,src/renderer/src/util.ts,src/renderer/src/worker/eval.ts,src/renderer/src/worker/evalWorker.ts',
+      'sonar.cpd.exclusions': '**/*',
+      'sonar.javascript.lcov.reportPaths': 'coverage/lcov.info',
+      'sonar.sourceEncoding': 'UTF-8',
+      'sonar.issue.ignore.multicriteria': 'e1,e2',
+      'sonar.issue.ignore.multicriteria.e1.ruleKey': 'typescript:S1523',
+      'sonar.issue.ignore.multicriteria.e1.resourceKey': 'src/renderer/src/worker/evalWorker.ts',
+      'sonar.issue.ignore.multicriteria.e2.ruleKey': 'tssecurity:S2083',
+      'sonar.issue.ignore.multicriteria.e2.resourceKey': 'src/main/index.ts',
+    },
+  });
+  console.log('SonarQube Cloud scan completed successfully!');
+} catch (error) {
+  console.error('SonarQube Cloud scan failed:', error);
+  process.exit(1);
+}

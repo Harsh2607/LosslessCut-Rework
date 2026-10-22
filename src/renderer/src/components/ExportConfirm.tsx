@@ -266,7 +266,9 @@ function ExportConfirm({
     separate: t('Export each segment to a separate file'),
   })[effectiveExportMode], [effectiveExportMode, t]);
 
-  const showHelpText = useCallback(({ icon = 'info', timer = 10000, text }: { icon?: SweetAlertIcon, timer?: number, text: string }) => getSwal().toast.fire({ icon, timer, text }), []);
+  const showHelpText = useCallback(({ icon = 'info', timer = 10000, text }: { icon?: SweetAlertIcon, timer?: number, text: string }) => {
+    void getSwal().toast.fire({ icon, timer, text });
+  }, []);
 
   const onPreserveChaptersPress = useCallback(() => {
     showHelpText({ text: i18n.t('Whether to preserve chapters from source file.') });
@@ -347,7 +349,7 @@ function ExportConfirm({
   }, [setEncBitrate]);
 
   const handleEncBitrateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = parseInt(e.target.value, 10);
+    const v = Number.parseInt(e.target.value, 10);
     if (Number.isNaN(v) || v <= 0) return;
     setEncBitrate(v);
   }, [setEncBitrate]);
@@ -364,7 +366,7 @@ function ExportConfirm({
       renderBottom={() => (
         <>
           <ToggleExportConfirm size="1.5em" />
-          <div style={{ fontSize: '.8em', marginLeft: '.4em', marginRight: '.5em', maxWidth: '8.5em', lineHeight: '100%', color: exportConfirmEnabled ? 'var(--gray-12)' : 'var(--gray-11)', cursor: 'pointer' }} role="button" onClick={toggleExportConfirmEnabled}>
+          <div style={{ fontSize: '.8em', marginLeft: '.4em', marginRight: '.5em', maxWidth: '8.5em', lineHeight: '100%', color: exportConfirmEnabled ? 'var(--gray-12)' : 'var(--gray-11)', cursor: 'pointer' }} role="button" tabIndex={0} onClick={toggleExportConfirmEnabled}>
             {t('Show this page before exporting?')}
           </div>
           {notices.totalNum > 0 && (

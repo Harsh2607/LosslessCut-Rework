@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { getCopyableMetadata, getEffectiveMetadata, getLanguageSuggestions, getNonNativeMovMetadataKeys, isValidCodecTag, isValidCreationTime, isValidLanguageCode, needsHvc1Tag } from './metadata';
+import { getCodecTagSuggestions, getCopyableMetadata, getEffectiveMetadata, getLanguageSuggestions, getNonNativeMovMetadataKeys, isValidCodecTag, isValidCreationTime, isValidLanguageCode, needsHvc1Tag } from './metadata';
 
 
 describe('getLanguageSuggestions', () => {
@@ -25,6 +25,12 @@ test('isValidCodecTag', () => {
   expect(isValidCodecTag('0x31637668')).toBe(true);
   expect(isValidCodecTag('hvc1 ')).toBe(false);
   expect(isValidCodecTag('hvc')).toBe(false);
+});
+
+test('getCodecTagSuggestions', () => {
+  expect(getCodecTagSuggestions('aac')).toEqual(['mp4a']);
+  expect(getCodecTagSuggestions('unknown')).toEqual([]);
+  expect(getCodecTagSuggestions(undefined)).toEqual([]);
 });
 
 test('needsHvc1Tag', () => {

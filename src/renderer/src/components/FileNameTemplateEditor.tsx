@@ -77,7 +77,7 @@ function FileNameTemplateEditor(opts: {
 
     const abortController = new AbortController();
 
-    (async () => {
+    void (async () => {
       try {
         // console.time('generateFileNames')
         const newGenerated = await generateFileNames(debouncedText);
@@ -252,15 +252,15 @@ function FileNameTemplateEditor(opts: {
               <div style={{ fontSize: '.9em', color: 'var(--gray-11)', display: 'flex', gap: '.3em', flexWrap: 'wrap', alignItems: 'center', marginBottom: '.7em' }}>
                 {`${t('Variables')}:`}
 
-                <IoIosHelpCircle fontSize="1.3em" color="var(--gray-12)" role="button" cursor="pointer" onClick={() => mainApi.openExternal(exportedFileNameTemplateHelpUrl)} />
+                <IoIosHelpCircle fontSize="1.3em" color="var(--gray-12)" role="button" tabIndex={0} cursor="pointer" onClick={() => mainApi.openExternal(exportedFileNameTemplateHelpUrl)} />
                 {availableVariables.map((variable) => (
-                  <span key={variable} role="button" style={{ cursor: 'copy', marginRight: '.2em', textDecoration: 'underline', textDecorationStyle: 'dashed', fontSize: '.9em' }} onClick={() => onVariableClick(variable)}>{variable}</span>
+                  <span key={variable} role="button" tabIndex={0} style={{ cursor: 'copy', marginRight: '.2em', textDecoration: 'underline', textDecorationStyle: 'dashed', fontSize: '.9em' }} onClick={() => onVariableClick(variable)}>{variable}</span>
                 ))}
               </div>
 
               {hasTextNumericPaddedValue && (
                 <div style={{ marginBottom: '.3em' }}>
-                  <Select value={outputFileNameMinZeroPadding} onChange={(e) => setOutputFileNameMinZeroPadding(parseInt(e.target.value, 10))} style={{ marginRight: '.5em', fontSize: '1em' }}>
+                  <Select value={outputFileNameMinZeroPadding} onChange={(e) => setOutputFileNameMinZeroPadding(Number.parseInt(e.target.value, 10))} style={{ marginRight: '.5em', fontSize: '1em' }}>
                     {Array.from({ length: 10 }).map((_v, i) => i + 1).map((v) => <option key={v} value={v}>{v}</option>)}
                   </Select>
                   {t('Minimum numeric padded length')}

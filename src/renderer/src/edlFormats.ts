@@ -30,9 +30,9 @@ function parseTime(str: string) {
   const rest = str.slice(timeMatch[0].length);
 
   const [, hourStr, minStr, secStr, msStr] = timeMatch;
-  const hour = hourStr != null ? parseInt(hourStr, 10) : 0;
-  const min = minStr != null ? parseInt(minStr, 10) : 0;
-  const sec = parseFloat(msStr != null ? `${secStr}.${msStr}` : secStr!);
+  const hour = hourStr != null ? Number.parseInt(hourStr, 10) : 0;
+  const min = minStr != null ? Number.parseInt(minStr, 10) : 0;
+  const sec = Number.parseFloat(msStr != null ? `${secStr}.${msStr}` : secStr!);
 
   const time = (((hour * 60) + min) * 60 + sec);
   return { time, rest };
@@ -45,7 +45,7 @@ export function parseCsvTime(str: string) {
 
 export const getFrameValParser = (fps: number) => (str: string) => {
   if (str === '') return undefined;
-  const frameCount = parseFloat(str);
+  const frameCount = Number.parseFloat(str);
   return getTimeFromFrameNum(fps, frameCount);
 };
 
@@ -108,22 +108,29 @@ export function parseCsv(csvStr: string, parseTimeFn: (a: string) => number | un
 
 export async function parseCutlist(clStr: string) {
   // first parse INI-File into "iniValue" object
-  const regex = {
-    section: /^\s*\[\s*([^\]]*)\s*]\s*$/,
-    param: /^\s*([^=]+?)\s*=\s*(.*?)\s*$/,
-    comment: /^\s*;.*$/,
-  };
   const iniValue: Record<string, string | undefined | Record<string, string | undefined>> = {};
 
   const lines = clStr.split(/[\n\r]+/);
   let section: string | undefined;
-  lines.forEach((line) => {
-    if (regex.comment.test(line)) {
+  lines.forEach((rawLine) => {
+    const line = rawLine.trim();
+    if (line.startsWith(';') || line.length === 0) {
+      if (line.length === 0 && section) section = undefined;
       return;
     }
-    if (regex.param.test(line)) {
-      const match = line.match(regex.param) || [];
-      const [, key, value] = match;
+    const sectionMatch = line.match(/^\[([^\]]*)\]$/);
+    if (sectionMatch) {
+      const sectionName = sectionMatch[1]!.trim();
+      if (sectionName) {
+        iniValue[sectionName] = {};
+        section = sectionName;
+      }
+      return;
+    }
+    const eqIdx = line.indexOf('=');
+    if (eqIdx !== -1) {
+      const key = line.slice(0, eqIdx).trim();
+      const value = line.slice(eqIdx + 1).trim();
       if (key) {
         if (section) {
           const sectionObj = iniValue[section];
@@ -133,15 +140,6 @@ export async function parseCutlist(clStr: string) {
           iniValue[key] = value;
         }
       }
-    } else if (regex.section.test(line)) {
-      const match = line.match(regex.section) || [];
-      const [, sectionMatch] = match;
-      if (sectionMatch) {
-        iniValue[sectionMatch] = {};
-        section = sectionMatch;
-      }
-    } else if (line.length === 0 && section) {
-      section = undefined;
     }
   });
 
@@ -151,8 +149,8 @@ export async function parseCutlist(clStr: string) {
   for (let i = 0; ; i += 1) {
     const cutEntry = iniValue[`Cut${i}`];
     if (cutEntry && typeof cutEntry !== 'string') {
-      const start = parseFloat(cutEntry['Start']!);
-      const end = Math.round((start + parseFloat(cutEntry['Duration']!) + Number.EPSILON) * 100) / 100;
+      const start = Number.parseFloat(cutEntry['Start']!);
+      const end = Math.round((start + Number.parseFloat(cutEntry['Duration']!) + Number.EPSILON) * 100) / 100;
       invariant(!Number.isNaN(start), 'Invalid Start');
       invariant(!Number.isNaN(end), 'Invalid End');
       cutArr.push({
@@ -172,9 +170,9 @@ export async function parseMplayerEdl(text: string) {
   const allRows = text.split('\n').flatMap((line) => {
     const match = line.match(/^\s*(\S+)\s+(\S+)\s+([0-3])\s*$/);
     if (!match) return [];
-    const start = parseFloat(match[1]!);
-    const end = parseFloat(match[2]!);
-    const type = parseInt(match[3]!, 10);
+    const start = Number.parseFloat(match[1]!);
+    const end = Number.parseFloat(match[2]!);
+    const type = Number.parseInt(match[3]!, 10);
     if (Number.isNaN(start) || Number.isNaN(end)) return [];
     if (start < 0 || end < 0 || start >= end) return [];
     return [{ start, end, type }];
@@ -205,10 +203,10 @@ export async function parseEdlCmx3600(text: string, fps: number) {
   const parseTimecode = (t: string) => {
     const match = t.match(/^(\d+)[:;](\d+)[:;](\d+)[:;](\d+)$/);
     invariant(match, `Invalid EDL line: ${t}`);
-    const hours = parseInt(match[1]!, 10);
-    const minutes = parseInt(match[2]!, 10);
-    const seconds = parseInt(match[3]!, 10);
-    const frames = parseInt(match[4]!, 10);
+    const hours = Number.parseInt(match[1]!, 10);
+    const minutes = Number.parseInt(match[2]!, 10);
+    const seconds = Number.parseInt(match[3]!, 10);
+    const frames = Number.parseInt(match[4]!, 10);
     return Duration.fromObject({ hours, minutes, seconds: seconds + (frames / fps) }).as('seconds');
   };
 
@@ -255,7 +253,7 @@ export function parsePbf(buf: Buffer) {
 
   return text.split('\n').flatMap((line) => {
     const match = line.match(/^\d+=(\d+)\*([^*]+)*([^*]+)?/);
-    if (match) return [{ start: parseInt(match[1]!, 10) / 1000, name: match[2] }];
+    if (match) return [{ start: Number.parseInt(match[1]!, 10) / 1000, name: match[2] }];
     return [];
   });
 }
@@ -302,9 +300,9 @@ export function parseFcpXml(xmlStr: string) {
   function getTime(str: string | undefined) {
     if (str == null) throw new Error('Missing attribute');
     const match = str.match(/^(\d+)\/(\d+)s$/);
-    if (match) return parseInt(match[1]!, 10) / parseInt(match[2]!, 10);
+    if (match) return Number.parseInt(match[1]!, 10) / Number.parseInt(match[2]!, 10);
     const secMatch = str.match(/^(\d+(?:\.\d+)?)s$/);
-    if (secMatch) return parseFloat(secMatch[1]!);
+    if (secMatch) return Number.parseFloat(secMatch[1]!);
     throw new Error('Invalid attribute');
   }
 
@@ -326,10 +324,9 @@ export function parseYouTube(str: string) {
 
     const { time, rest } = timeParsed;
 
-    const nameMatch = rest.match(/^[\s-]+([^\n]*)$/);
-    if (!nameMatch) return undefined;
-
-    const [, name] = nameMatch;
+    const sepMatch = rest.match(/^[ -]+/);
+    if (!sepMatch) return undefined;
+    const name = rest.slice(sepMatch[0].length);
 
     return { time, name };
   }
@@ -407,10 +404,10 @@ export function parseDvAnalyzerSummaryTxt(txt: string) {
     if (headerFound) {
       const match = line.match(/^(\d{2}):(\d{2}):(\d{2}).(\d{3})\s+(\S+)\s+-\s+(\S+)\s+(\S+\s+\S+)\s+-\s+(\S+\s+\S+)/);
       if (!match) break;
-      const h = parseInt(match[1]!, 10);
-      const m = parseInt(match[2]!, 10);
-      const s = parseInt(match[3]!, 10);
-      const ms = parseInt(match[4]!, 10);
+      const h = Number.parseInt(match[1]!, 10);
+      const m = Number.parseInt(match[2]!, 10);
+      const s = Number.parseInt(match[3]!, 10);
+      const ms = Number.parseInt(match[4]!, 10);
       const total = s + ((m + (h * 60)) * 60) + (ms / 1000);
       const recordedStart = match[7]!;
       const recordedEnd = match[8]!;
@@ -462,7 +459,7 @@ export function parseSrt(text: string) {
         lines.push(line);
       }
     } else if (/^\d+$/.test(line)) {
-      const parsedIndex = parseInt(line, 10);
+      const parsedIndex = Number.parseInt(line, 10);
       if (!Number.isNaN(parsedIndex) && parsedIndex > 0) {
         subtitleIndexAt = parsedIndex;
       }
@@ -491,21 +488,22 @@ export function parseDjiGps1(lines: string[]) {
   const firstLine = lines[0];
   if (firstLine == null) return undefined;
 
-  const gpsMatch = firstLine.match(/^\s*([^,]+),\s*SS\s+([^,]+),\s*ISO\s+([^,]+),\s*EV\s+([^,]+)(?:,\s*DZOOM\s+([^,]+))?,\s*GPS\s+\(([^,]+),\s*([^,]+),\s*([^,]+)\),\s*D\s+([^m]+)m,\s*H\s+([^m]+)m,\s*H\.S\s+([^m]+)m\/s,\s*V\.S\s+([^m]+)m\/s\s*$/);
+  const trimmed = firstLine.trim();
+  const gpsMatch = trimmed.match(/^([^,]+),\s*SS\s+([\d.]+),\s*ISO\s+(\d+),\s*EV\s+([-\d.]+)(?:,\s*DZOOM\s+([\d.]+))?,\s*GPS\s+\(([-\d.]+),\s*([-\d.]+),\s*([-\d.]+)\),\s*D\s+([-\d.]+)m,\s*H\s+([-\d.]+)m,\s*H\.S\s+([-\d.]+)m\/s,\s*V\.S\s+([-\d.]+)m\/s$/);
   if (!gpsMatch) return undefined;
   return {
     f: gpsMatch[1]!,
-    ss: parseFloat(gpsMatch[2]!),
-    iso: parseInt(gpsMatch[3]!, 10),
-    ev: parseFloat(gpsMatch[4]!),
-    dzoom: gpsMatch[5] != null ? parseFloat(gpsMatch[5]) : undefined,
-    lng: parseFloat(gpsMatch[6]!),
-    lat: parseFloat(gpsMatch[7]!),
-    alt: parseFloat(gpsMatch[8]!),
-    distance: parseFloat(gpsMatch[9]!),
-    height: parseFloat(gpsMatch[10]!),
-    horizontalSpeed: parseFloat(gpsMatch[11]!),
-    verticalSpeed: parseFloat(gpsMatch[12]!),
+    ss: Number.parseFloat(gpsMatch[2]!),
+    iso: Number.parseInt(gpsMatch[3]!, 10),
+    ev: Number.parseFloat(gpsMatch[4]!),
+    dzoom: gpsMatch[5] != null ? Number.parseFloat(gpsMatch[5]) : undefined,
+    lng: Number.parseFloat(gpsMatch[6]!),
+    lat: Number.parseFloat(gpsMatch[7]!),
+    alt: Number.parseFloat(gpsMatch[8]!),
+    distance: Number.parseFloat(gpsMatch[9]!),
+    height: Number.parseFloat(gpsMatch[10]!),
+    horizontalSpeed: Number.parseFloat(gpsMatch[11]!),
+    verticalSpeed: Number.parseFloat(gpsMatch[12]!),
   };
 }
 
@@ -515,7 +513,7 @@ export function parseDjiGps2(lines: string[]) {
   const line: string = xml.font.split('\n')[2];
   invariant(line != null);
   const records: Record<string, string> = {};
-  const pairsMatch = line.match(/([^\s:[]+\s*:\s*[^\s\]]+)+/g);
+  const pairsMatch = line.match(/\b([a-zA-Z0-9_]+)\s*:\s*([^\s\]]+)/g);
   if (pairsMatch == null) return undefined;
   for (const match of pairsMatch) {
     const split = match.split(':');
@@ -526,9 +524,9 @@ export function parseDjiGps2(lines: string[]) {
       }
     }
   }
-  const altitude = parseFloat(records['abs_alt']!);
-  const lat = parseFloat(records['latitude']!);
-  const lng = parseFloat(records['longitude']!);
+  const altitude = Number.parseFloat(records['abs_alt']!);
+  const lat = Number.parseFloat(records['latitude']!);
+  const lng = Number.parseFloat(records['longitude']!);
   invariant(!Number.isNaN(lat));
   invariant(!Number.isNaN(lng));
   return {

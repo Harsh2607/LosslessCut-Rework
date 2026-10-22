@@ -27,4 +27,7 @@ yarn.ps1
 # Test clips and project files generated during verification
 test-sample*
 *.llc
+.scannerwork/
+/coverage
+sonar_issues.json
 
