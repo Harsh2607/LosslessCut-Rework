@@ -1,9 +1,8 @@
 name: Test
 
 on:
-  # Only master: on a branch with a pull request, a push would otherwise run the tests twice (once for push, once for pull_request)
   push:
-    branches: [master]
+    branches: [main, master]
   pull_request:
 
 jobs:
@@ -16,15 +15,12 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      # Windows fix. See https://github.com/actions/checkout/issues/226
       - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
 
-      - uses: actions/checkout@v6
-
-      # todo remove once fixed https://github.com/actions/setup-node/issues/531
       - run: corepack enable
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'yarn'
@@ -33,8 +29,13 @@ jobs:
       - run: yarn dedupe --check
       - run: yarn test
       - run: yarn tsc
+      - run: yarn check-types
       - run: yarn lint
       - run: yarn build
+      - name: Run Playwright Electron E2E
+        uses: coactions/setup-xvfb@v1
+        with:
+          run: yarn test:e2e
       - name: Check docs
         run: |
           yarn generate-docs

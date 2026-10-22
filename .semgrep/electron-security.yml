@@ -1,0 +1,46 @@
+rules:
+  - id: electron-context-isolation-check
+    patterns:
+      - pattern: |
+          new BrowserWindow({
+            ...,
+            webPreferences: {
+              ...,
+              contextIsolation: false,
+              ...
+            },
+            ...
+          })
+    message: "Security Risk: contextIsolation is explicitly disabled in BrowserWindow. This allows renderer code to tamper with Electron APIs."
+    languages: [javascript, typescript]
+    severity: ERROR
+
+  - id: electron-insecure-open-external
+    patterns:
+      - pattern-either:
+          - pattern: shell.openExternal($URL)
+          - pattern: electron.shell.openExternal($URL)
+      - pattern-not: |
+          if (<... $URL.startsWith(...) ...>) { ... }
+    message: "Security Warning: Ensure $URL is validated against an allowed protocol (https:, http:, mailto:) before passing to shell.openExternal."
+    languages: [javascript, typescript]
+    severity: WARNING
+
+  - id: electron-no-raw-eval-in-ipc
+    patterns:
+      - pattern-either:
+          - pattern: |
+              ipcMain.handle($CHANNEL, (..., $DATA, ...) => {
+                ...,
+                eval(...),
+                ...
+              })
+          - pattern: |
+              ipcMain.on($CHANNEL, (..., $DATA, ...) => {
+                ...,
+                eval(...),
+                ...
+              })
+    message: "Critical Security Violation: Untrusted IPC message payloads must never reach eval() or Function()."
+    languages: [javascript, typescript]
+    severity: ERROR

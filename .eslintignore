@@ -7,4 +7,8 @@
 /website/.astro
 /script/captureScreens.js
 /script/runSonar.js
+/script/analyzeSonarResults.js
+/coverage
+/test-results
+/out/playwright-report
 /scratch

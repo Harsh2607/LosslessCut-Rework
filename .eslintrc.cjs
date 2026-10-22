@@ -5,7 +5,10 @@ module.exports = {
     'jsx-a11y/interactive-supports-focus': 0,
     'jsx-a11y/control-has-associated-label': 0,
     'react/no-unused-prop-types': 0,
+    'react/jsx-props-no-spreading': 0,
     'func-call-spacing': 0,
+    'no-void': ['error', { allowAsStatement: true }],
+    'unicorn/number-literal-case': 0,
   },
 
   overrides: [
@@ -33,7 +36,16 @@ module.exports = {
       },
     },
     {
-      files: ['./script/**/*.{js,cjs,mjs,jsx,ts,tsx,mts}', './website/**/*.{js,cjs,mjs,jsx,ts,tsx,mts}', 'electron.vite.config.ts'],
+      files: [
+        './script/**/*.{js,cjs,mjs,jsx,ts,tsx,mts}',
+        './website/**/*.{js,cjs,mjs,jsx,ts,tsx,mts}',
+        './test/**/*.{js,cjs,mjs,jsx,ts,tsx,mts}',
+        '**/*.test.{js,ts,tsx}',
+        '**/*.spec.{js,ts,tsx}',
+        'electron.vite.config.ts',
+        'playwright.config.ts',
+        'vitest.config.ts',
+      ],
       rules: {
         'import/no-extraneous-dependencies': ['error', {
           devDependencies: true,

@@ -1,0 +1,15 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: typecheck
+      run: yarn tsc
+    - name: linter
+      glob: "*.{ts,tsx}"
+      run: yarn lint {staged_files}
+    - name: unit-tests
+      run: yarn test run
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: npx --no -- commitlint --edit {1}

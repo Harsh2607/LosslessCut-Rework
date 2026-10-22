@@ -42,7 +42,7 @@ type ParameterDialogParameters = Record<string, string>;
 
 const offsetSegments = (segments: DefiniteSegmentBase[], offset: number) => segments.map((s) => ({ start: s.start + offset, end: s.end + offset }));
 
-const wrapExpressionSubmit = (execute: (val: string) => Promise<{ error: string } | void>) => async (value: string): Promise<{ error: string } | undefined> => {
+const wrapExpressionSubmit = (execute: (val: string) => Promise<{ error: string } | undefined>) => async (value: string): Promise<{ error: string } | undefined> => {
   if (value.trim().length === 0) return { error: i18n.t('Please enter a JavaScript expression.') };
   try {
     const res = await execute(value);
