@@ -57,6 +57,44 @@ export default ({ app, mainWindow, newVersion, isStoreBuild, openExternal }: {
     ['Subtitles (SRT)', 'srt'],
   ];
 
+  const segmentGroups: [string, string][][] = [
+    [
+      ['Create num segments', 'createNumSegments'],
+      ['Create fixed duration segments', 'createFixedDurationSegments'],
+      ['Create byte sized segments', 'createFixedByteSizedSegments'],
+      ['Create random segments', 'createRandomSegments'],
+      ['Create segments from keyframes', 'createSegmentsFromKeyframes'],
+    ],
+    [
+      ['Reorder segments by start time', 'reorderSegsByStartTime'],
+      ['Shuffle segments order', 'shuffleSegments'],
+    ],
+    [
+      ['Combine overlapping segments', 'combineOverlappingSegments'],
+      ['Combine selected segments', 'combineSelectedSegments'],
+      ['Split segment at cursor', 'splitCurrentSegment'],
+      ['Invert all segments on timeline', 'invertAllSegments'],
+      ['Fill gaps between segments', 'fillSegmentsGaps'],
+    ],
+    [
+      ['Shift all segments on timeline', 'shiftAllSegmentTimes'],
+      ['Align segment times to keyframes', 'alignSegmentTimesToKeyframes'],
+    ],
+    [
+      ['Clear all segments', 'clearSegments'],
+    ],
+  ];
+
+  const toolActions: [string, string][] = [
+    ['Merge/concatenate files', 'concatBatch'],
+    ['Set custom start offset/timecode', 'setStartTimeOffset'],
+    ['Detect black scenes', 'detectBlackScenes'],
+    ['Detect silent scenes', 'detectSilentScenes'],
+    ['Detect scene changes', 'detectSceneChanges'],
+    ['Read all keyframes', 'readAllKeyframes'],
+    ['Last ffmpeg commands', 'toggleLastCommands'],
+  ];
+
   const menu: (MenuItemConstructorOptions | MenuItem)[] = [
     ...(process.platform === 'darwin' ? [{ role: 'appMenu' as const }] : []),
 
@@ -110,8 +148,6 @@ export default ({ app, mainWindow, newVersion, isStoreBuild, openExternal }: {
           accelerator: 'CmdOrCtrl+,',
           click: () => send('toggleSettings'),
         },
-        // Due to Apple Review Guidelines, we cannot include an Exit menu item here
-        // Apple has their own Quit from the app menu
         ...(process.platform !== 'darwin' ? [
           { type: 'separator' } as const,
           {
@@ -148,35 +184,10 @@ export default ({ app, mainWindow, newVersion, isStoreBuild, openExternal }: {
 
     {
       label: esc(t('Segments')),
-      submenu: [
-        action('Create num segments', 'createNumSegments'),
-        action('Create fixed duration segments', 'createFixedDurationSegments'),
-        action('Create byte sized segments', 'createFixedByteSizedSegments'),
-        action('Create random segments', 'createRandomSegments'),
-        action('Create segments from keyframes', 'createSegmentsFromKeyframes'),
-
-        { type: 'separator' },
-
-        action('Reorder segments by start time', 'reorderSegsByStartTime'),
-        action('Shuffle segments order', 'shuffleSegments'),
-
-        { type: 'separator' },
-
-        action('Combine overlapping segments', 'combineOverlappingSegments'),
-        action('Combine selected segments', 'combineSelectedSegments'),
-        action('Split segment at cursor', 'splitCurrentSegment'),
-        action('Invert all segments on timeline', 'invertAllSegments'),
-        action('Fill gaps between segments', 'fillSegmentsGaps'),
-
-        { type: 'separator' },
-
-        action('Shift all segments on timeline', 'shiftAllSegmentTimes'),
-        action('Align segment times to keyframes', 'alignSegmentTimesToKeyframes'),
-
-        { type: 'separator' },
-
-        action('Clear all segments', 'clearSegments'),
-      ],
+      submenu: segmentGroups.flatMap((group, i) => [
+        ...(i > 0 ? [{ type: 'separator' as const }] : []),
+        ...group.map(([label, channel]) => action(label, channel)),
+      ]),
     },
 
     {
@@ -193,21 +204,12 @@ export default ({ app, mainWindow, newVersion, isStoreBuild, openExternal }: {
       ],
     },
 
-    // On Windows the windowMenu has a close Ctrl+W which clashes with File->Close shortcut
-    // Also, Windows apps don't normally have a Window menu.
-    // https://github.com/mifi/lossless-cut/discussions/2409
     ...(process.platform === 'darwin' ? [{ role: 'windowMenu' as const, label: esc(t('Window')) }] : []),
 
     {
       label: esc(t('Tools')),
       submenu: [
-        action('Merge/concatenate files', 'concatBatch'),
-        action('Set custom start offset/timecode', 'setStartTimeOffset'),
-        action('Detect black scenes', 'detectBlackScenes'),
-        action('Detect silent scenes', 'detectSilentScenes'),
-        action('Detect scene changes', 'detectSceneChanges'),
-        action('Read all keyframes', 'readAllKeyframes'),
-        action('Last ffmpeg commands', 'toggleLastCommands'),
+        ...toolActions.map(([label, channel]) => action(label, channel)),
         { type: 'separator' },
         { role: 'toggleDevTools', label: esc(t('Toggle Developer Tools')) },
       ],

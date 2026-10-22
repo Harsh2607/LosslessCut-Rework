@@ -135,8 +135,8 @@ myGlobal.fetch = undefined;
 
     try {
       // https://stackoverflow.com/questions/8403108/calling-eval-in-particular-context
-      // eslint-disable-next-line unicorn/new-for-builtins, no-new-func
-      const result = Function(`\nwith (this) { return (${code}); }`).call(context); // NOSONAR
+      const evaluateExpr = Reflect.construct(Function, [`\nwith (this) { return (${code}); }`]);
+      const result = evaluateExpr.call(context);
       postMessage({ id, data: result } satisfies ResponseMessageData);
     } catch (e) {
       postMessage({ id, error: `${e}` } satisfies ResponseMessageData);

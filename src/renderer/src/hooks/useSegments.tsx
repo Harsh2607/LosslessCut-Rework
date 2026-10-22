@@ -42,6 +42,19 @@ type ParameterDialogParameters = Record<string, string>;
 
 const offsetSegments = (segments: DefiniteSegmentBase[], offset: number) => segments.map((s) => ({ start: s.start + offset, end: s.end + offset }));
 
+const wrapExpressionSubmit = (execute: (val: string) => Promise<{ error: string } | void>) => async (value: string): Promise<{ error: string } | undefined> => {
+  if (value.trim().length === 0) return { error: i18n.t('Please enter a JavaScript expression.') };
+  try {
+    const res = await execute(value);
+    return res || undefined;
+  } catch (err) {
+    if (err instanceof Error) {
+      return { error: i18n.t('Expression failed: {{errorMessage}}', { errorMessage: err.message }) };
+    }
+    throw err;
+  }
+};
+
 function useSegments({ filePath, workingRef, setWorking, setProgress, videoStream, fileDuration, getRelevantTime, maxLabelLength, checkFileOpened, invertCutSegments, segmentsToChaptersOnly, timecodePlaceholder, parseTimecode, appendFfmpegCommandLog, fileDurationNonZero, mainFileMeta, seekAbs, activeVideoStreamIndex, activeAudioStreamIndexes, handleError, showGenericDialog, simpleMode, ffmpegHwaccel }: {
   filePath?: string | undefined,
   workingRef: MutableRefObject<boolean>,
@@ -761,6 +774,13 @@ function useSegments({ filePath, workingRef, setWorking, setProgress, videoStrea
     selectSegments(cutSegments.filter((seg) => seg.end == null));
   }, [cutSegments, selectSegments]);
 
+  const openExpressionDialog = useCallback((dialogProps: React.ComponentProps<typeof ExpressionDialog>) => {
+    showGenericDialog({
+      isAlert: true,
+      render: () => <ExpressionDialog {...dialogProps} />,
+    });
+  }, [showGenericDialog]);
+
   const selectSegmentsByExpr = useCallback(async () => {
     const matchSegment = async (seg: StateSegment, index: number, expr: string) => (
       (await safeishEval(expr, { segment: getScopeSegment(seg, index) })) === true
@@ -771,44 +791,31 @@ function useSegments({ filePath, workingRef, setWorking, setProgress, videoStrea
         ((await matchSegment(seg, index, expr)) ? [seg] : [])
       ), { concurrency: 5 })).flat();
 
-    const onSubmit = async (value: string) => {
-      try {
-        if (value.trim().length === 0) return { error: i18n.t('Please enter a JavaScript expression.') };
-        const segmentsToSelect = await getSegmentsToSelect(value);
-        if (segmentsToSelect.length === 0) return { error: i18n.t('No segments match this expression.') };
-        if (segmentsToSelect.length === cutSegments.length) return { error: i18n.t('All segments match this expression.') };
-        selectSegments(segmentsToSelect);
-        return undefined;
-      } catch (err) {
-        if (err instanceof Error) {
-          return { error: i18n.t('Expression failed: {{errorMessage}}', { errorMessage: err.message }) };
-        }
-        throw err;
-      }
-    };
-
-    showGenericDialog({
-      isAlert: true,
-      render: () => (
-        <ExpressionDialog
-          onSubmit={onSubmit}
-          confirmButtonText={t('Select segments')}
-          examples={[
-            { name: i18n.t('Segment duration less than 5 seconds'), code: 'segment.duration < 5' },
-            { name: i18n.t('Segment starts after 01:00'), code: 'segment.start > 60' },
-            { name: i18n.t('Segment label (exact)'), code: "segment.label === 'My label'" },
-            { name: i18n.t('Segment label (starts with)'), code: "segment.label.startsWith('My lab')" },
-            { name: i18n.t('Segment label (regexp)'), code: '/^My label/.test(segment.label)' },
-            { name: i18n.t('Segment tag value'), code: "segment.tags.myTag === 'tag value'" },
-            { name: i18n.t('Markers'), code: 'segment.end == null' },
-          ]}
-          title={i18n.t('Select segments by expression')}
-          description={<Trans>Enter a JavaScript expression which will be evaluated for each segment. Segments for which the expression evaluates to &quot;true&quot; will be selected. <button type="button" className="link-button" onClick={() => mainApi.openExternal(selectSegmentByExpressionHelpUrl)}>View available syntax.</button></Trans>}
-          variables={['segment.index', 'segment.label', 'segment.start', 'segment.end', 'segment.duration', 'segment.tags.*']}
-        />
-      ),
+    const onSubmit = wrapExpressionSubmit(async (value) => {
+      const segmentsToSelect = await getSegmentsToSelect(value);
+      if (segmentsToSelect.length === 0) return { error: i18n.t('No segments match this expression.') };
+      if (segmentsToSelect.length === cutSegments.length) return { error: i18n.t('All segments match this expression.') };
+      selectSegments(segmentsToSelect);
+      return undefined;
     });
-  }, [showGenericDialog, t, getScopeSegment, cutSegments, selectSegments]);
+
+    openExpressionDialog({
+      onSubmit,
+      confirmButtonText: t('Select segments'),
+      examples: [
+        { name: i18n.t('Segment duration less than 5 seconds'), code: 'segment.duration < 5' },
+        { name: i18n.t('Segment starts after 01:00'), code: 'segment.start > 60' },
+        { name: i18n.t('Segment label (exact)'), code: "segment.label === 'My label'" },
+        { name: i18n.t('Segment label (starts with)'), code: "segment.label.startsWith('My lab')" },
+        { name: i18n.t('Segment label (regexp)'), code: '/^My label/.test(segment.label)' },
+        { name: i18n.t('Segment tag value'), code: "segment.tags.myTag === 'tag value'" },
+        { name: i18n.t('Markers'), code: 'segment.end == null' },
+      ],
+      title: i18n.t('Select segments by expression'),
+      description: <Trans>Enter a JavaScript expression which will be evaluated for each segment. Segments for which the expression evaluates to &quot;true&quot; will be selected. <button type="button" className="link-button" onClick={() => mainApi.openExternal(selectSegmentByExpressionHelpUrl)}>View available syntax.</button></Trans>,
+      variables: ['segment.index', 'segment.label', 'segment.start', 'segment.end', 'segment.duration', 'segment.tags.*'],
+    });
+  }, [cutSegments, getScopeSegment, openExpressionDialog, selectSegments, t]);
 
   const mutateSegmentsByExpr = useCallback(async () => {
     async function mutateSegment(seg: StateSegment, index: number, expr: string) {
@@ -840,45 +847,29 @@ function useSegments({ filePath, workingRef, setWorking, setProgress, videoStrea
       ...(seg.selected && await mutateSegment(seg, index, expr)),
     }), { concurrency: 5 })).flat();
 
-    const onSubmit = async (value: string) => {
-      try {
-        if (value.trim().length === 0) return { error: i18n.t('Please enter a JavaScript expression.') };
-        const mutated = await mutateSegments(value);
-
-        safeSetCutSegments(mutated, fileDuration);
-
-        return undefined;
-      } catch (err) {
-        if (err instanceof Error) {
-          return { error: i18n.t('Expression failed: {{errorMessage}}', { errorMessage: err.message }) };
-        }
-        throw err;
-      }
-    };
-
-    showGenericDialog({
-      isAlert: true,
-      render: () => (
-        <ExpressionDialog
-          onSubmit={onSubmit}
-          confirmButtonText={t('Apply change')}
-          examples={[
-            { name: i18n.t('Expand segments +5 sec'), code: '{ start: segment.start - 5, end: segment.end + 5 }' },
-            { name: i18n.t('Shrink segments -5 sec'), code: '{ start: segment.start + 5, end: segment.end - 5 }' },
-            { name: i18n.t('Center segments around start time'), code: '{ start: segment.start - 5, end: segment.start + 5 }' },
-            // eslint-disable-next-line no-template-curly-in-string
-            { name: i18n.t('Add number suffix to label'), code: '{ label: `${segment.label} ${segment.index + 1}` }' },
-            { name: i18n.t('Add a tag to every even segment'), code: '{ tags: (segment.index + 1) % 2 === 0 ? { ...segment.tags, even: \'true\' } : segment.tags }' },
-            { name: i18n.t('Convert segments to markers'), code: '{ end: undefined }' },
-            { name: i18n.t('Convert markers to segments'), code: '{ ...(segment.end == null && { end: segment.start + 5 }) }' },
-          ]}
-          title={i18n.t('Edit segments by expression')}
-          description={<Trans>Enter a JavaScript expression which will be evaluated for each selected segment. Returned properties will be edited. <button type="button" className="link-button" onClick={() => mainApi.openExternal(editSegmentByExpressionHelpUrl)}>View available syntax.</button></Trans>}
-          variables={['segment.index', 'segment.label', 'segment.start', 'segment.end', 'segment.tags.*']}
-        />
-      ),
+    const onSubmit = wrapExpressionSubmit(async (value) => {
+      const mutated = await mutateSegments(value);
+      safeSetCutSegments(mutated, fileDuration);
     });
-  }, [cutSegments, fileDuration, getScopeSegment, safeSetCutSegments, showGenericDialog, t]);
+
+    openExpressionDialog({
+      onSubmit,
+      confirmButtonText: t('Apply change'),
+      examples: [
+        { name: i18n.t('Expand segments +5 sec'), code: '{ start: segment.start - 5, end: segment.end + 5 }' },
+        { name: i18n.t('Shrink segments -5 sec'), code: '{ start: segment.start + 5, end: segment.end - 5 }' },
+        { name: i18n.t('Center segments around start time'), code: '{ start: segment.start - 5, end: segment.start + 5 }' },
+        // eslint-disable-next-line no-template-curly-in-string
+        { name: i18n.t('Add number suffix to label'), code: '{ label: `${segment.label} ${segment.index + 1}` }' },
+        { name: i18n.t('Add a tag to every even segment'), code: '{ tags: (segment.index + 1) % 2 === 0 ? { ...segment.tags, even: \'true\' } : segment.tags }' },
+        { name: i18n.t('Convert segments to markers'), code: '{ end: undefined }' },
+        { name: i18n.t('Convert markers to segments'), code: '{ ...(segment.end == null && { end: segment.start + 5 }) }' },
+      ],
+      title: i18n.t('Edit segments by expression'),
+      description: <Trans>Enter a JavaScript expression which will be evaluated for each selected segment. Returned properties will be edited. <button type="button" className="link-button" onClick={() => mainApi.openExternal(editSegmentByExpressionHelpUrl)}>View available syntax.</button></Trans>,
+      variables: ['segment.index', 'segment.label', 'segment.start', 'segment.end', 'segment.tags.*'],
+    });
+  }, [cutSegments, fileDuration, getScopeSegment, openExpressionDialog, safeSetCutSegments, t]);
 
   const labelSelectedSegments = useCallback(async () => {
     const firstSelectedSegment = selectedSegments[0];

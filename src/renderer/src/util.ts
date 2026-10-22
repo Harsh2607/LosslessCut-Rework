@@ -19,9 +19,8 @@ import { dirname, parse as parsePath, join, extname, isAbsolute, resolve, basena
 
 const { stat, lstat, readdir, utimes, unlink, open, access, constants: { R_OK, W_OK } } = window.require('node:fs/promises');
 const remote = window.require('@electron/remote');
-const { app } = remote;
+const { app, shell } = remote;
 const { isWindows, isMac } = remote.require('./index.js');
-const { ipcRenderer } = window.require('electron');
 
 const appVersion = app.getVersion();
 const appPath = app.getAppPath();
@@ -29,9 +28,9 @@ const appPath = app.getAppPath();
 export { isWindows, isMac, appVersion, appPath };
 
 
-export const trashFile = async (path: string) => ipcRenderer.invoke('tryTrashItem', path);
+export const trashFile = async (path: string) => shell.trashItem(path);
 
-export const showItemInFolder = async (path: string) => ipcRenderer.invoke('showItemInFolder', path);
+export const showItemInFolder = async (path: string) => shell.showItemInFolder(path);
 
 export function reorderSortableItems<T extends { id: UniqueIdentifier }>(
   items: T[],

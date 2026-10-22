@@ -388,40 +388,23 @@ function Settings({
         <ModifierKeySetting text={t('Mouse wheel frame seek modifier key')} value={mouseWheelFrameSeekModifierKey} setValue={setMouseWheelFrameSeekModifierKey} />
         <ModifierKeySetting text={t('Mouse wheel keyframe seek modifier key')} value={mouseWheelKeyframeSeekModifierKey} setValue={setMouseWheelKeyframeSeekModifierKey} />
 
-        <Row>
-          <KeyCell>{t('Timeline trackpad/wheel sensitivity')}</KeyCell>
-          <td>
-            <Button onClick={() => onTunerRequested('wheelSensitivity')}><FaCogs style={{ verticalAlign: 'middle', marginRight: '.4em' }} />{t('Change value')}</Button>
-          </td>
-        </Row>
-
-        <Row>
-          <KeyCell>{t('Timeline keyboard seek interval')}</KeyCell>
-          <td>
-            <Button onClick={() => onTunerRequested('keyboardNormalSeekSpeed')}><FaCogs style={{ verticalAlign: 'middle', marginRight: '.4em' }} /> {t('Change value')}</Button>
-          </td>
-        </Row>
-
-        <Row>
-          <KeyCell>{t('Timeline keyboard seek interval (longer)')}</KeyCell>
-          <td>
-            <Button onClick={() => onTunerRequested('keyboardSeekSpeed2')}><FaCogs style={{ verticalAlign: 'middle', marginRight: '.4em' }} /> {t('Change value')}</Button>
-          </td>
-        </Row>
-
-        <Row>
-          <KeyCell>{t('Timeline keyboard seek interval (longest)')}</KeyCell>
-          <td>
-            <Button onClick={() => onTunerRequested('keyboardSeekSpeed3')}><FaCogs style={{ verticalAlign: 'middle', marginRight: '.4em' }} /> {t('Change value')}</Button>
-          </td>
-        </Row>
-
-        <Row>
-          <KeyCell>{t('Timeline keyboard seek acceleration')}</KeyCell>
-          <td>
-            <Button onClick={() => onTunerRequested('keyboardSeekAccFactor')}><FaCogs style={{ verticalAlign: 'middle', marginRight: '.4em' }} /> {t('Change value')}</Button>
-          </td>
-        </Row>
+        {([
+          ['Timeline trackpad/wheel sensitivity', 'wheelSensitivity'],
+          ['Timeline keyboard seek interval', 'keyboardNormalSeekSpeed'],
+          ['Timeline keyboard seek interval (longer)', 'keyboardSeekSpeed2'],
+          ['Timeline keyboard seek interval (longest)', 'keyboardSeekSpeed3'],
+          ['Timeline keyboard seek acceleration', 'keyboardSeekAccFactor'],
+        ] as const).map(([labelKey, tunerKey]) => (
+          <Row key={tunerKey}>
+            <KeyCell>{t(labelKey)}</KeyCell>
+            <td>
+              <Button onClick={() => onTunerRequested(tunerKey)}>
+                <FaCogs style={{ verticalAlign: 'middle', marginRight: '.4em' }} />
+                {t('Change value')}
+              </Button>
+            </td>
+          </Row>
+        ))}
 
         <Row>
           <KeyCell>{t('Invert timeline trackpad/wheel direction?')}</KeyCell>

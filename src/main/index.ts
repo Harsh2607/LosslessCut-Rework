@@ -10,8 +10,8 @@ import debounce from 'lodash/debounce.js';
 import yargsParser from 'yargs-parser';
 import JSON5 from 'json5';
 import remote from '@electron/remote/main/index.js';
-import { readFile, stat } from 'node:fs/promises';
-import { join, resolve, normalize } from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import assert from 'node:assert';
 import timers from 'node:timers/promises';
 import { z } from 'zod';
@@ -373,28 +373,6 @@ async function init() {
     });
 
     ipcMain.on('setLanguage', (_e, newLanguage) => changeLanguage(newLanguage));
-
-    function sanitizeFilePath(inputPath: unknown): string {
-      if (typeof inputPath !== 'string' || !inputPath.trim() || inputPath.includes('\0')) {
-        throw new Error('Invalid file path');
-      }
-      return resolve(normalize(inputPath));
-    }
-
-    ipcMain.handle('tryTrashItem', async (_e, rawPath: unknown) => {
-      const sanitized = sanitizeFilePath(rawPath);
-      try {
-        await stat(sanitized); // NOSONAR
-      } catch (err) {
-        if (err instanceof Error && 'code' in err && err.code === 'ENOENT') return;
-      }
-      await shell.trashItem(sanitized); // NOSONAR
-    });
-
-    ipcMain.handle('showItemInFolder', (_e, rawPath: unknown) => {
-      const sanitized = sanitizeFilePath(rawPath);
-      shell.showItemInFolder(sanitized); // NOSONAR
-    });
 
     ipcMain.on('apiActionResponse', (_e, { id }) => {
       apiActionRequests.get(id)?.();
