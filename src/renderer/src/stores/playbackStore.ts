@@ -73,3 +73,5 @@ export const usePlaybackStore = create<PlaybackState>((set) => ({
     playbackMode: undefined,
   }),
 }));
+
+export default usePlaybackStore;

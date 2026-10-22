@@ -5,3 +5,5 @@
 /website/dist
 /website/.wrangler
 /website/.astro
+/script/captureScreens.js
+/scratch

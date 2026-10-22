@@ -36,9 +36,9 @@ const containerStyle: MotionStyle = {
 
 const supportedFormats = ['MP4', 'MKV', 'MOV', 'WEBM', 'MP3', 'WAV', 'M4A', 'FLAC'];
 
-function NoFileLoaded({ mifiLink, currentCutSeg: _currentCutSeg, onClick, darkMode, keyBindingByAction }: {
+function NoFileLoaded({ mifiLink, onClick, darkMode, keyBindingByAction }: {
   mifiLink: unknown,
-  currentCutSeg: StateSegment | undefined,
+  currentCutSeg?: StateSegment,
   onClick: () => void,
   darkMode?: boolean,
   keyBindingByAction: Record<string, KeyBinding>,

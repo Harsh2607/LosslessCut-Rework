@@ -2,14 +2,12 @@ import express from 'express';
 import morgan from 'morgan';
 import http from 'node:http';
 import assert from 'node:assert';
+import type { BrowserWindow } from 'electron';
 
 import { homepageUrl } from '../common/constants.js';
 import logger from './logger.js';
 import { isRequestAllowed } from './httpServerUtil.js';
 import type { AppEvent } from './index.js';
-
-
-import type { BrowserWindow } from 'electron';
 
 export default ({ port, onKeyboardAction, onAwaitAppEvent, getMainWindow }: {
   port: number,

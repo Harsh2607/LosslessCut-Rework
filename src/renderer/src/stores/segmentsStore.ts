@@ -50,3 +50,5 @@ export const useSegmentsStore = create<SegmentsState>((set) => ({
     editingSegmentTags: undefined,
   }),
 }));
+
+export default useSegmentsStore;

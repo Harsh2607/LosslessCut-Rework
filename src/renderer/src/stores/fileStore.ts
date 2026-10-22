@@ -71,3 +71,5 @@ export const useFileStore = create<FileState>((set) => ({
     activeSubtitleStreamIndex: undefined,
   }),
 }));
+
+export default useFileStore;

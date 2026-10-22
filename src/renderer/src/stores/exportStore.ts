@@ -44,3 +44,5 @@ export const useExportStore = create<ExportState>((set) => ({
   resetCurrentFileExportCount: () => set({ currentFileExportCount: 0 }),
   setShortestFlag: (shortestFlag) => set({ shortestFlag }),
 }));
+
+export default useExportStore;

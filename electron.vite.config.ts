@@ -24,6 +24,13 @@ export default defineConfig({
   },
   renderer: {
     plugins: [react()],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          silenceDeprecations: ['import'],
+        },
+      },
+    },
     build: {
       target: 'chrome148',
       sourcemap: true,

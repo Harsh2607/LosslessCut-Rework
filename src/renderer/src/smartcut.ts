@@ -113,39 +113,39 @@ export async function analyzeCutpointsSmartCut({ path, segments, videoStream }: 
 }): Promise<SmartCutAnalysis[]> {
   const results: SmartCutAnalysis[] = [];
 
-  for (let i = 0; i < segments.length; i++) {
-    const seg = segments[i];
-    if (!seg) continue;
-    const duration = seg.end != null ? seg.end - seg.start : undefined;
-    try {
-      const check = await needsSmartCut({ path, desiredCutFrom: seg.start, videoStream });
-      const needsCut = check.segmentNeedsSmartCut;
-      const leadIn = needsCut ? Math.max(0, check.losslessCutFrom - seg.start) : 0;
-      const isFull = duration != null && check.losslessCutFrom > (seg.end ?? seg.start);
-      const losslessPct = duration != null && duration > 0 ? Math.max(0, Math.min(100, Math.round(((duration - leadIn) / duration) * 100))) : 100;
+  for (const [i, seg] of segments.entries()) {
+    if (seg) {
+      const duration = seg.end != null ? seg.end - seg.start : undefined;
+      try {
+        const check = await needsSmartCut({ path, desiredCutFrom: seg.start, videoStream });
+        const needsCut = check.segmentNeedsSmartCut;
+        const leadIn = needsCut ? Math.max(0, check.losslessCutFrom - seg.start) : 0;
+        const isFull = duration != null && check.losslessCutFrom > (seg.end ?? seg.start);
+        const losslessPct = duration != null && duration > 0 ? Math.max(0, Math.min(100, Math.round(((duration - leadIn) / duration) * 100))) : 100;
 
-      results.push({
-        segmentIndex: i,
-        start: seg.start,
-        end: seg.end,
-        duration,
-        isExactKeyframe: !needsCut,
-        needsSmartCut: needsCut,
-        leadInDuration: leadIn,
-        losslessPercentage: losslessPct,
-        recommendation: isFull ? 'full-encode' : (needsCut ? 'smart-cut' : 'stream-copy'),
-      });
-    } catch {
-      results.push({
-        segmentIndex: i,
-        start: seg.start,
-        end: seg.end,
-        duration,
-        isExactKeyframe: false,
-        needsSmartCut: false,
-        losslessPercentage: 100,
-        recommendation: 'stream-copy',
-      });
+        results.push({
+          segmentIndex: i,
+          start: seg.start,
+          end: seg.end,
+          duration,
+          isExactKeyframe: !needsCut,
+          needsSmartCut: needsCut,
+          leadInDuration: leadIn,
+          losslessPercentage: losslessPct,
+          recommendation: isFull ? 'full-encode' : (needsCut ? 'smart-cut' : 'stream-copy'),
+        });
+      } catch {
+        results.push({
+          segmentIndex: i,
+          start: seg.start,
+          end: seg.end,
+          duration,
+          isExactKeyframe: false,
+          needsSmartCut: false,
+          losslessPercentage: 100,
+          recommendation: 'stream-copy',
+        });
+      }
     }
   }
 

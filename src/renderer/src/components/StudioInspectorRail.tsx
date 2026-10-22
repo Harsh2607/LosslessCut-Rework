@@ -37,7 +37,7 @@ function StudioInspectorRail({
   const mainFileMeta = useFileStore((s) => s.mainFileMeta);
 
   const streams = mainFileMeta?.ffprobeMeta?.streams ?? [];
-  const cutSegments = segmentListProps.cutSegments;
+  const { cutSegments } = segmentListProps;
 
   return (
     <aside
@@ -87,6 +87,7 @@ function StudioInspectorRail({
       {/* Rail Body: Content varies based on Active Workflow Tab */}
       {studioWorkflowMode === 'cuts' && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <SegmentList {...segmentListProps} width={width} />
         </div>
       )}
