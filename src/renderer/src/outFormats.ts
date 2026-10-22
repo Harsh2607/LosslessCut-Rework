@@ -153,3 +153,48 @@ modifiedFormats.ipod = 'M4A - Audio for iTunes';
 export type FfmpegFormat = keyof typeof modifiedFormats;
 
 export default modifiedFormats;
+
+
+export interface ExportPreset {
+  id: string;
+  name: string;
+  description: string;
+  format: string;
+  movFastStart?: boolean | undefined;
+  videoCodec?: string | undefined;
+  audioCodec?: string | undefined;
+}
+
+export const exportPresets: ExportPreset[] = [
+  {
+    id: 'stream-copy-default',
+    name: 'Lossless Stream Copy (Standard)',
+    description: 'Direct stream copy with 0% quality loss and maximum export speed',
+    format: 'mp4',
+  },
+  {
+    id: 'web-faststart',
+    name: 'Web & Streaming FastStart',
+    description: 'Moves MP4 moov atom to beginning for instantaneous playback buffering',
+    format: 'mp4',
+    movFastStart: true,
+  },
+  {
+    id: 'audio-lossless-flac',
+    name: 'Extract Audio (Lossless FLAC)',
+    description: 'Extracts audio tracks into lossless FLAC format',
+    format: 'flac',
+  },
+  {
+    id: 'audio-aac',
+    name: 'Extract Audio (AAC / M4A)',
+    description: 'Extracts audio tracks into standard AAC stream',
+    format: 'adts',
+  },
+  {
+    id: 'mkv-archival',
+    name: 'Matroska Archival (MKV)',
+    description: 'Universal container preserving all multi-track video, audio, subtitles, and chapters',
+    format: 'matroska',
+  },
+];

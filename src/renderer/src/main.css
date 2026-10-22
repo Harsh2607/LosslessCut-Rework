@@ -153,3 +153,63 @@ input:focus-visible, select:focus-visible {
   transition: none !important;
   animation: none !important;
 }
+
+
+/* Modern LosslessCut Design Tokens */
+:root {
+  --llc-bg-app: #0b0f19;
+  --llc-bg-panel: rgba(18, 24, 38, 0.95);
+  --llc-bg-card: rgba(28, 36, 56, 0.7);
+  --llc-bg-card-hover: rgba(38, 48, 75, 0.9);
+  --llc-border-subtle: rgba(255, 255, 255, 0.08);
+  --llc-border-active: rgba(56, 189, 248, 0.5);
+  --llc-accent-primary: #0284c7;
+  --llc-accent-glow: rgba(14, 165, 233, 0.25);
+  --llc-accent-success: #10b981;
+  --llc-accent-warning: #f59e0b;
+  --llc-accent-danger: #ef4444;
+}
+
+/* Polished Segment Cards */
+.segment-card {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.segment-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Timecode Display Badge */
+.timecode-badge {
+  font-family: 'SF Mono', 'Fira Code', 'Roboto Mono', Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 4px 10px;
+  backdrop-filter: blur(8px);
+}
+
+/* Smart Cut & Stream Badges */
+.badge-stream-copy {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge-smart-cut {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}

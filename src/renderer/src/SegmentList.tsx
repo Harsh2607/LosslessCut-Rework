@@ -218,22 +218,26 @@ const Segment = memo(({
     const transitions = [
       ...(sortable.transition ? [sortable.transition] : []),
       'opacity 100ms ease-out',
+      'box-shadow 150ms ease',
     ];
+    const segColorStr = 'segColorIndex' in seg ? getSegColor(seg).string() : undefined;
     return {
       visibility: sortable.isDragging ? 'hidden' : undefined,
-      padding: '3px 5px',
-      margin: '1px 0',
+      padding: '4px 6px',
+      margin: '2px 0',
       boxSizing: 'border-box',
       originY: 0,
       position: 'relative',
       transform: CSS.Transform.toString(sortable.transform),
       transition: transitions.length > 0 ? transitions.join(', ') : undefined,
-      background: 'var(--gray-1)',
-      border: `1px solid ${isActive ? 'var(--gray-10)' : 'transparent'}`,
-      borderRadius: 5,
+      background: isActive ? 'var(--gray-3)' : 'var(--gray-2)',
+      border: `1px solid ${isActive ? 'var(--gray-8)' : 'var(--gray-4)'}`,
+      borderLeft: segColorStr ? `4px solid ${segColorStr}` : `1px solid ${isActive ? 'var(--gray-8)' : 'var(--gray-4)'}`,
+      borderRadius: 6,
+      boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.3)' : '0 1px 2px rgba(0,0,0,0.1)',
       opacity: !selected && !invertCutSegments ? 0.5 : undefined,
     };
-  }, [invertCutSegments, isActive, selected, sortable.isDragging, sortable.transform, sortable.transition]);
+  }, [getSegColor, invertCutSegments, isActive, seg, selected, sortable.isDragging, sortable.transform, sortable.transition]);
 
   const setRef = useCallback((node: HTMLDivElement | null) => {
     sortable.setNodeRef(node);
@@ -247,7 +251,7 @@ const Segment = memo(({
       onClick={handleSegmentClick}
       onDoubleClick={onDoubleClick}
       style={style}
-      className="segment-list-entry"
+      className="segment-list-entry segment-card"
     >
       <div
         // eslint-disable-next-line react/jsx-props-no-spreading

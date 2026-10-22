@@ -74,13 +74,13 @@ const Waveforms = memo(({ calculateTimelinePercent, fileDurationNonZero, wavefor
 
 // eslint-disable-next-line react/display-name
 const CommandedTime = memo(({ commandedTimePercent }: { commandedTimePercent: string }) => {
-  const color = 'var(--gray-12)';
-  const commonStyle: CSSProperties = { left: commandedTimePercent, position: 'absolute', pointerEvents: 'none' };
+  const color = 'var(--cyan-9)';
+  const commonStyle: CSSProperties = { left: commandedTimePercent, position: 'absolute', pointerEvents: 'none', zIndex: 10 };
   return (
     <>
-      <FaCaretDown style={{ ...commonStyle, top: 0, color, fontSize: 14, marginLeft: -7, marginTop: -6 }} />
-      <div style={{ ...commonStyle, bottom: 0, top: 0, backgroundColor: color, width: currentTimeWidth, boxShadow: outlineShadow }} />
-      <FaCaretUp style={{ ...commonStyle, bottom: 0, color, fontSize: 14, marginLeft: -7, marginBottom: -5 }} />
+      <FaCaretDown style={{ ...commonStyle, top: 0, color, fontSize: 15, marginLeft: -7.5, marginTop: -6, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }} />
+      <div style={{ ...commonStyle, bottom: 0, top: 0, backgroundColor: color, width: currentTimeWidth + 1, boxShadow: '0 0 6px var(--cyan-8), 0 0 0 1px rgba(0,0,0,0.4)' }} />
+      <FaCaretUp style={{ ...commonStyle, bottom: 0, color, fontSize: 15, marginLeft: -7.5, marginBottom: -5, filter: 'drop-shadow(0 -2px 4px rgba(0,0,0,0.5))' }} />
     </>
   );
 });

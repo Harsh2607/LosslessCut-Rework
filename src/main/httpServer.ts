@@ -9,10 +9,13 @@ import { isRequestAllowed } from './httpServerUtil.js';
 import type { AppEvent } from './index.js';
 
 
-export default ({ port, onKeyboardAction, onAwaitAppEvent }: {
+import type { BrowserWindow } from 'electron';
+
+export default ({ port, onKeyboardAction, onAwaitAppEvent, getMainWindow }: {
   port: number,
   onKeyboardAction: (action: string, args: unknown[]) => Promise<void>,
   onAwaitAppEvent: (eventName: string, signal: AbortSignal) => Promise<AppEvent>,
+  getMainWindow?: () => BrowserWindow | null | undefined,
 }) => {
   const app = express();
 
@@ -55,6 +58,35 @@ export default ({ port, onKeyboardAction, onAwaitAppEvent }: {
     abortController.signal.addEventListener('abort', () => logger.info('await-event aborted', eventName));
     req.on('close', () => abortController.abort());
     res.json(await onAwaitAppEvent(eventName, abortController.signal));
+  });
+
+  apiRouter.get('/screenshot', async (_req, res) => {
+    try {
+      const win = getMainWindow?.();
+      if (!win) {
+        res.status(503).send('Window not ready');
+        return;
+      }
+      const image = await win.webContents.capturePage();
+      res.setHeader('content-type', 'image/png');
+      res.end(image.toPNG());
+    } catch (err) {
+      res.status(500).send(String(err));
+    }
+  });
+
+  apiRouter.post('/eval', express.text({ type: '*/*' }), async (req, res) => {
+    try {
+      const win = getMainWindow?.();
+      if (!win) {
+        res.status(503).send('Window not ready');
+        return;
+      }
+      const result = await win.webContents.executeJavaScript(req.body);
+      res.json({ success: true, result });
+    } catch (err) {
+      res.status(500).json({ success: false, error: String(err) });
+    }
   });
 
   const server = http.createServer(app);

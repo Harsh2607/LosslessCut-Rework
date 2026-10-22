@@ -21,3 +21,10 @@ node_modules
 /common-ts-dist
 
 tsconfig.*.tsbuildinfo
+yarn.cmd
+yarn.ps1
+
+# Test clips and project files generated during verification
+test-sample*
+*.llc
+

@@ -48,8 +48,16 @@ if (macArch != null) {
   const archive = join(dir, archiveName);
   await download(`https://github.com/mifi/ffmpeg-builds/releases/download/${windowsLinuxRelease}/${archiveName}`, archive);
 
-  // 7z, because tar on Windows may be GNU tar (from Git), which doesn't support zip
-  await (isWindows ? execa('7z', ['x', '-y', archive, `-o${dir}`], { stdout: 'ignore' }) : execa('tar', ['-xf', archive, '-C', dir]));
+  // 7z if available, fallback to tar (bsdtar with zip support) on Windows
+  if (isWindows) {
+    try {
+      await execa('7z', ['x', '-y', archive, `-o${dir}`], { stdout: 'ignore' });
+    } catch {
+      await execa('tar', ['-xf', archive, '-C', dir]);
+    }
+  } else {
+    await execa('tar', ['-xf', archive, '-C', dir]);
+  }
 
   await mkdir(binDir);
   const extractedBinDir = join(dir, name, 'bin');

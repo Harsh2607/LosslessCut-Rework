@@ -177,7 +177,7 @@ function ExportConfirm({
 
   const { keyframeCut, toggleKeyframeCut, preserveMovData, setPreserveMovData, preserveMetadata, setPreserveMetadata, preserveChapters, setPreserveChapters, movFastStart, setMovFastStart, avoidNegativeTs, setAvoidNegativeTs, autoDeleteMergedSegments, exportConfirmEnabled, toggleExportConfirmEnabled, segmentsToChapters, setSegmentsToChapters, preserveMetadataOnMerge, setPreserveMetadataOnMerge, enableSmartCut, setEnableSmartCut, effectiveExportMode, enableOverwriteOutput, setEnableOverwriteOutput, ffmpegExperimental, setFfmpegExperimental, cutFromAdjustmentFrames, setCutFromAdjustmentFrames, cutToAdjustmentFrames, setCutToAdjustmentFrames, setCutFileTemplate, setCutMergedFileTemplate, simpleMode, keyframesEnabled } = useUserSettings();
 
-  const [showAdvanced, setShowAdvanced] = useState(!simpleMode);
+  const [showAdvanced, setShowAdvanced] = useState(true);
 
   const togglePreserveChapters = useCallback(() => setPreserveChapters((val) => !val), [setPreserveChapters]);
   const togglePreserveMovData = useCallback(() => setPreserveMovData((val) => !val), [setPreserveMovData]);
@@ -611,7 +611,14 @@ function ExportConfirm({
                 <>
                   <AnimatedTr>
                     <td>
-                      {t('Smart cut (experimental):')}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5em', flexWrap: 'wrap', marginBottom: '0.2em' }}>
+                        <span>{t('Smart cut (experimental):')}</span>
+                        {needSmartCut ? (
+                          <span className="badge-smart-cut">{t('GOP Re-encode Needed')}</span>
+                        ) : (
+                          <span className="badge-stream-copy">{t('100% Lossless Copy')}</span>
+                        )}
+                      </div>
                       {renderNotice(notices.specific['smartCut'])}
                     </td>
                     <td>

@@ -417,7 +417,7 @@ async function init() {
 
     if (httpApi != null) {
       const port = typeof httpApi === 'number' ? httpApi : 8080;
-      const { startHttpServer } = HttpServer({ port, onKeyboardAction: sendApiAction, onAwaitAppEvent });
+      const { startHttpServer } = HttpServer({ port, onKeyboardAction: sendApiAction, onAwaitAppEvent, getMainWindow: () => mainWindow });
       await startHttpServer();
       logger.info('HTTP API listening on port', port);
     }

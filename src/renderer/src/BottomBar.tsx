@@ -357,10 +357,12 @@ function BottomBar({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '2.3em',
-    height: '2.3em',
+    width: '2.4em',
+    height: '2.4em',
     borderRadius: '50%',
     boxSizing: 'border-box',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.45)',
+    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
   }), [playing]);
 
   // ok this is a bit over-engineered but what the hell!
@@ -616,11 +618,11 @@ function BottomBar({
         <div style={{ flexGrow: 1 }} />
 
         <div style={timeWrapperStyle}>
-          <div style={{ fontFamily: 'monospace', letterSpacing: '-0.08em', pointerEvents: 'auto' }}>
-            {formatTimecode({ seconds: displayTime })}
-            <span style={{ display: 'inline-block', minWidth: '3.5em', marginLeft: '.5em' }}>
+          <div className="timecode-badge" style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center' }}>
+            <span>{formatTimecode({ seconds: displayTime })}</span>
+            <span style={{ display: 'inline-block', minWidth: '3.5em', marginLeft: '.5em', opacity: 0.85 }}>
               {displayTimeFrameCount ?? 0}<span style={{ opacity: 0.5, userSelect: 'none' }}>f</span>
-              {isZoomed && <span style={{ marginLeft: '.5em' }}>{Math.round((displayTime / fileDurationNonZero) * 100)}<span style={{ opacity: 0.5, userSelect: 'none' }}>%</span></span>}
+              {isZoomed && <span style={{ marginLeft: '.5em', color: 'var(--cyan-11)' }}>{Math.round((displayTime / fileDurationNonZero) * 100)}<span style={{ opacity: 0.5, userSelect: 'none' }}>%</span></span>}
             </span>
           </div>
         </div>
