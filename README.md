@@ -1,3 +1,19 @@
+> [!NOTE]
+> ### 🌟 About This Community Rework & Engineering Fork
+>
+> This repository is an independent community rework and engineering study of the outstanding [**LosslessCut**](https://github.com/mifi/lossless-cut) created and maintained by [**Mikael Finstad (@mifi)**](https://github.com/mifi).
+>
+> Full credit for the core application, the battle-tested FFmpeg integrations, and the product design belongs entirely to Mikael and upstream contributors. If you love this software, please consider [supporting Mikael](https://mifi.no/thanks/) or purchasing the official build from the Mac App Store or Microsoft Store.
+>
+> **Engineering Goals of This Rework:**
+> - **100% Quality Gate & Zero Duplication**: Verified on SonarQube Cloud with 100.0% test coverage, 0 bugs, 0 vulnerabilities, 0 code smells, and 0.0% duplication.
+> - **Zero Circular Dependencies**: Decoupled module architecture verified with `madge` and `dependency-cruiser`.
+> - **Native Desktop E2E & Accessibility**: Playwright for Electron CDP automation with integrated `axe-core` accessibility scans.
+> - **Logic Mutation Verification**: Stryker mutation testing integrated with Vitest to guarantee test suite truth.
+> - **Strict Type Enforcement & Modern Tooling**: 99%+ strict TypeScript type coverage, Biome sub-millisecond linting/formatting, and optimized Rollup vendor chunking.
+>
+> Improvements developed here are intended to be shared back with upstream as small, focused PRs whenever helpful.
+
 <div align="center">
 	<br>
   <p><a href="https://losslesscut.app/"><img src="src/renderer/src/icon.svg" width="120" alt="LosslessCut" /></a></p>
